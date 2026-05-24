@@ -65,3 +65,35 @@ export function dayShort(iso: string): string {
 export function monthYear(iso: string): string {
   return MONTH_YEAR_FMT.format(new Date(iso));
 }
+
+/**
+ * TZ canónica del torneo. Mundial 2026 se juega en USA/MX/CA (UTC-4 a UTC-8).
+ * Mexico City (UTC-6) es la TZ de referencia para agrupar y mostrar fechas
+ * "del partido". Evita que un match nocturno aparezca como "el día siguiente"
+ * por estar en madrugada UTC.
+ */
+export const TOURNAMENT_TZ = "America/Mexico_City";
+
+const TOURNAMENT_DAY_KEY_FMT = new Intl.DateTimeFormat("en-CA", {
+  timeZone: TOURNAMENT_TZ,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+const TOURNAMENT_DAY_LONG_FMT = new Intl.DateTimeFormat("es", {
+  timeZone: TOURNAMENT_TZ,
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+});
+
+/** Día del torneo en formato YYYY-MM-DD (sortable, estable). */
+export function tournamentDayKey(iso: string): string {
+  return TOURNAMENT_DAY_KEY_FMT.format(new Date(iso));
+}
+
+/** Día del torneo en español: "jueves, 11 de junio". */
+export function tournamentDayLong(iso: string): string {
+  return TOURNAMENT_DAY_LONG_FMT.format(new Date(iso));
+}

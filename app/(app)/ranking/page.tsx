@@ -31,7 +31,13 @@ export default async function RankingPage() {
         </p>
       </header>
 
-      {entries.length >= 1 && <Podium top={entries.slice(0, 3)} />}
+      {entries.length >= 3 ? (
+        <Podium top={entries.slice(0, 3)} />
+      ) : entries.length > 0 ? (
+        <p className="rounded-xl bg-marfil/60 p-4 text-center text-sm text-carbon/60 ring-1 ring-carbon/5">
+          🥇 El podio aparece cuando hay al menos 3 familiares jugando.
+        </p>
+      ) : null}
 
       <RankingTable entries={entries} currentUserId={user!.id} />
     </div>

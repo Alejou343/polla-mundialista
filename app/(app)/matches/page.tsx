@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { MatchCard } from "@/components/MatchCard";
 import { DateGroupHeader } from "@/components/DateGroupHeader";
 import { StageFilter } from "@/components/StageFilter";
+import { tournamentDayKey } from "@/lib/format";
 import type { Bet, Match, Stage } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -10,10 +11,6 @@ const VALID_STAGES: Stage[] = ["group", "r32", "r16", "qf", "sf", "third", "fina
 
 function isStage(s: string | undefined): s is Stage {
   return !!s && (VALID_STAGES as string[]).includes(s);
-}
-
-function dayKey(iso: string): string {
-  return iso.slice(0, 10);
 }
 
 export default async function MatchesPage({ searchParams }: { searchParams?: { stage?: string } }) {
@@ -34,10 +31,11 @@ export default async function MatchesPage({ searchParams }: { searchParams?: { s
 
   const matchList = (matches ?? []) as Match[];
 
-  // Group by day
+  // Agrupar por día del torneo (TZ Mexico City) — evita que matches
+  // nocturnos del Mundial aparezcan como "el día siguiente" por UTC.
   const groups = new Map<string, Match[]>();
   for (const m of matchList) {
-    const key = dayKey(m.kickoff_time);
+    const key = tournamentDayKey(m.kickoff_time);
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key)!.push(m);
   }
