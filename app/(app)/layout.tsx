@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { SignoutButton } from "@/components/SignoutButton";
-import { NavPill } from "@/components/NavPill";
-import { HelpButton } from "@/components/HelpButton";
+import { MobileMenu } from "@/components/MobileMenu";
+import { HowToPlayModal } from "@/components/HowToPlayModal";
 
 export const dynamic = "force-dynamic";
 
@@ -34,37 +33,28 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-10 border-b border-carbon/10 bg-marfil/95 backdrop-blur">
-        <div className="mx-auto max-w-screen-sm px-4 pt-3">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/matches"
-              className="flex items-center gap-1.5 font-headline text-2xl tracking-wide text-cesped"
-            >
-              <span aria-hidden>⚽</span>
-              <span>POLLA 2026</span>
-            </Link>
-            <div className="flex items-center gap-2">
-              <HelpButton />
-              <SignoutButton />
-            </div>
-          </div>
-          <nav className="-mx-1 mt-2 flex items-center gap-1 overflow-x-auto pb-2">
-            <NavPill href="/matches" badge={pendingCount}>
-              Partidos
-            </NavPill>
-            <NavPill href="/ranking">Ranking</NavPill>
-            {profile?.is_admin && <NavPill href="/admin">Admin</NavPill>}
-            <NavPill href="/perfil" avatarName={displayName}>
-              {displayName}
-            </NavPill>
-          </nav>
+      <header className="sticky top-0 z-20 border-b border-carbon/10 bg-marfil/95 backdrop-blur">
+        <div className="mx-auto flex max-w-screen-sm items-center justify-between px-4 py-3">
+          <Link
+            href="/matches"
+            className="flex items-center gap-1.5 font-headline text-2xl tracking-wide text-cesped"
+          >
+            <span aria-hidden>⚽</span>
+            <span>POLLA 2026</span>
+          </Link>
+          <MobileMenu
+            displayName={displayName}
+            isAdmin={!!profile?.is_admin}
+            pendingCount={pendingCount}
+          />
         </div>
       </header>
       <main className="flex-1">{children}</main>
       <footer className="border-t border-carbon/10 py-4 text-center text-xs text-carbon/50">
         Polla Familiar Mundial 2026 · 🕒 Horarios en hora de Colombia.
       </footer>
+      {/* Modal global: se abre con evento polla:open-howto desde el menú o auto al primer visit */}
+      <HowToPlayModal />
     </div>
   );
 }
