@@ -44,7 +44,7 @@ export function StageFilter({
   return (
     <div className="space-y-2">
       {/* Vista: todos / pendientes / jugados */}
-      <nav className="-mx-4 overflow-x-auto px-4" aria-label="Filtrar partidos por estado">
+      <nav className="overflow-x-auto" aria-label="Filtrar partidos por estado">
         <ul className="flex gap-2">
           {viewTabs.map((t) => {
             const isActive = activeView === t.value;
@@ -73,7 +73,7 @@ export function StageFilter({
       </nav>
 
       {/* Etapa */}
-      <nav className="-mx-4 overflow-x-auto px-4 pb-1" aria-label="Filtrar por etapa del torneo">
+      <nav className="overflow-x-auto pb-1" aria-label="Filtrar por etapa del torneo">
         <ul className="flex gap-2">
           {STAGE_TABS.map((t) => {
             const isActive = activeStage === t.value;

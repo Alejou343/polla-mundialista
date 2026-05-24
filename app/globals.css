@@ -3,11 +3,20 @@
 @tailwind utilities;
 
 @layer base {
+  html,
+  body {
+    /* Evita scroll horizontal en mobile causado por elementos off-screen
+       (drawer fixed con translate-x-full, scrollers internos con -mx-N, etc.).
+       Sticky vertical sigue funcionando porque html mantiene su scroll vertical. */
+    overflow-x: hidden;
+  }
   html {
     -webkit-text-size-adjust: 100%;
   }
   body {
     text-rendering: optimizeLegibility;
+    /* width: 100% asegura que el body nunca expanda más allá del viewport */
+    width: 100%;
   }
   /* Inputs heredan font para que combinen con el body */
   input,
