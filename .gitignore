@@ -42,3 +42,6 @@ next-env.d.ts
 
 # test coverage
 coverage/
+
+# e2e screenshots (locales)
+.e2e-screenshots/
