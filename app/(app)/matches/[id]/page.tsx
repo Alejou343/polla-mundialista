@@ -4,7 +4,8 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { BetForm } from "./bet-form";
 import { BetsList } from "@/components/BetsList";
 import { PointsBadge } from "@/components/PointsBadge";
-import { teamCode, teamDisplay } from "@/lib/teams";
+import { teamDisplay } from "@/lib/teams";
+import { Flag } from "@/components/Flag";
 import { stageLabel, dateTimeFull, timeShort } from "@/lib/format";
 import { calculatePoints } from "@/lib/scoring";
 import type { Bet, Match } from "@/lib/types";
@@ -115,11 +116,11 @@ export default async function MatchDetailPage({ params }: { params: { id: string
         </p>
 
         <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-          <div className="text-center">
-            <div className="font-headline text-6xl leading-none text-carbon">
-              {teamCode(match.home_team)}
+          <div className="flex flex-col items-center text-center">
+            <Flag team={match.home_team} size="xl" />
+            <div className="mt-2 text-sm font-medium text-carbon">
+              {teamDisplay(match.home_team)}
             </div>
-            <div className="mt-2 text-sm text-carbon/70">{teamDisplay(match.home_team)}</div>
           </div>
 
           <div className="text-center">
@@ -145,11 +146,11 @@ export default async function MatchDetailPage({ params }: { params: { id: string
             )}
           </div>
 
-          <div className="text-center">
-            <div className="font-headline text-6xl leading-none text-carbon">
-              {teamCode(match.away_team)}
+          <div className="flex flex-col items-center text-center">
+            <Flag team={match.away_team} size="xl" />
+            <div className="mt-2 text-sm font-medium text-carbon">
+              {teamDisplay(match.away_team)}
             </div>
-            <div className="mt-2 text-sm text-carbon/70">{teamDisplay(match.away_team)}</div>
           </div>
         </div>
       </header>

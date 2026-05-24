@@ -2,8 +2,9 @@
 
 import { useState, useTransition } from "react";
 import type { Match } from "@/lib/types";
-import { teamCode, teamDisplay } from "@/lib/teams";
+import { teamDisplay } from "@/lib/teams";
 import { stageLabel, timeShort, dayShort } from "@/lib/format";
+import { Flag } from "@/components/Flag";
 
 export function AdminMatchRow({ match }: { match: Match }) {
   const [home, setHome] = useState<string>(match.home_score?.toString() ?? "");
@@ -47,13 +48,11 @@ export function AdminMatchRow({ match }: { match: Match }) {
       </div>
 
       <div className="mt-2 grid grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-2">
-        <span className="text-right">
-          <span className="block font-headline text-base leading-none">
-            {teamCode(match.home_team)}
-          </span>
-          <span className="block truncate text-[10px] text-carbon/60">
+        <span className="flex items-center justify-end gap-1.5">
+          <span className="block min-w-0 truncate text-right text-[11px] text-carbon/80">
             {teamDisplay(match.home_team)}
           </span>
+          <Flag team={match.home_team} size="sm" />
         </span>
         <input
           type="number"
@@ -76,11 +75,9 @@ export function AdminMatchRow({ match }: { match: Match }) {
           inputMode="numeric"
           aria-label={`Marcador ${teamDisplay(match.away_team)}`}
         />
-        <span className="text-left">
-          <span className="block font-headline text-base leading-none">
-            {teamCode(match.away_team)}
-          </span>
-          <span className="block truncate text-[10px] text-carbon/60">
+        <span className="flex items-center gap-1.5">
+          <Flag team={match.away_team} size="sm" />
+          <span className="block min-w-0 truncate text-[11px] text-carbon/80">
             {teamDisplay(match.away_team)}
           </span>
         </span>

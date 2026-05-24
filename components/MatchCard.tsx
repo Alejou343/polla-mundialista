@@ -1,8 +1,9 @@
 import Link from "next/link";
 import type { Bet, Match } from "@/lib/types";
-import { teamCode, teamDisplay } from "@/lib/teams";
+import { teamDisplay } from "@/lib/teams";
 import { stageLabel, timeShort } from "@/lib/format";
 import { PointsBadge } from "@/components/PointsBadge";
+import { Flag } from "@/components/Flag";
 
 function StatusBadge({ match }: { match: Match }) {
   const kickoff = new Date(match.kickoff_time);
@@ -80,20 +81,20 @@ export function MatchCard({ match, bet }: { match: Match; bet?: Bet | null }) {
 
       {/* Equipos + score */}
       <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-        <div className="text-center">
-          <div className="font-headline text-4xl leading-none text-carbon">
-            {teamCode(match.home_team)}
+        <div className="flex flex-col items-center text-center">
+          <Flag team={match.home_team} size="lg" />
+          <div className="mt-2 truncate text-sm font-medium text-carbon">
+            {teamDisplay(match.home_team)}
           </div>
-          <div className="mt-1 truncate text-xs text-carbon/70">{teamDisplay(match.home_team)}</div>
         </div>
 
         <CenterScore match={match} />
 
-        <div className="text-center">
-          <div className="font-headline text-4xl leading-none text-carbon">
-            {teamCode(match.away_team)}
+        <div className="flex flex-col items-center text-center">
+          <Flag team={match.away_team} size="lg" />
+          <div className="mt-2 truncate text-sm font-medium text-carbon">
+            {teamDisplay(match.away_team)}
           </div>
-          <div className="mt-1 truncate text-xs text-carbon/70">{teamDisplay(match.away_team)}</div>
         </div>
       </div>
 
