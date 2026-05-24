@@ -27,11 +27,10 @@ export function BetForm({ matchId, existing }: { matchId: string; existing: Bet 
   }
 
   return (
-    <form action={formAction} className="rounded-xl border border-carbon/10 bg-white p-4">
+    <form action={formAction} className="rounded-xl bg-white p-4 shadow-sm">
       <input type="hidden" name="matchId" value={matchId} />
-      <div className="grid grid-cols-3 items-end gap-3">
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
         <label className="block">
-          <span className="text-xs font-medium text-carbon/70">Local</span>
           <input
             type="number"
             name="predictedHome"
@@ -40,12 +39,12 @@ export function BetForm({ matchId, existing }: { matchId: string; existing: Bet 
             defaultValue={existing?.predicted_home_score ?? ""}
             required
             inputMode="numeric"
-            className="input-base text-center font-headline text-3xl"
+            aria-label="Marcador local"
+            className="block w-full rounded-xl border border-carbon/15 bg-marfil py-6 text-center font-headline text-5xl tabular-nums text-carbon focus:border-cesped focus:outline-none focus:ring-2 focus:ring-cesped/30"
           />
         </label>
-        <div className="text-center font-headline text-3xl text-carbon/40">–</div>
+        <div className="font-headline text-4xl text-carbon/30">–</div>
         <label className="block">
-          <span className="text-xs font-medium text-carbon/70">Visitante</span>
           <input
             type="number"
             name="predictedAway"
@@ -54,18 +53,19 @@ export function BetForm({ matchId, existing }: { matchId: string; existing: Bet 
             defaultValue={existing?.predicted_away_score ?? ""}
             required
             inputMode="numeric"
-            className="input-base text-center font-headline text-3xl"
+            aria-label="Marcador visitante"
+            className="block w-full rounded-xl border border-carbon/15 bg-marfil py-6 text-center font-headline text-5xl tabular-nums text-carbon focus:border-cesped focus:outline-none focus:ring-2 focus:ring-cesped/30"
           />
         </label>
       </div>
 
       {state?.ok && (
-        <p className="mt-3 rounded bg-cesped/10 px-3 py-2 text-sm text-cesped">
+        <p className="mt-3 rounded-md bg-cesped/10 px-3 py-2 text-sm text-cesped">
           ¡Apuesta guardada!
         </p>
       )}
       {state && !state.ok && (
-        <p className="mt-3 rounded bg-cancha/10 px-3 py-2 text-sm text-cancha">{state.error}</p>
+        <p className="mt-3 rounded-md bg-cancha/10 px-3 py-2 text-sm text-cancha">{state.error}</p>
       )}
 
       <div className="mt-4 flex items-center gap-2">

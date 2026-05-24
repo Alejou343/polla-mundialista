@@ -45,3 +45,11 @@ coverage/
 
 # e2e screenshots (locales)
 .e2e-screenshots/
+.mockup-screenshots/
+
+# MCP
+.mcp.json
+
+# Mockups del diseñador (no commitear binarios pesados)
+*.mockup.html
+Polla Mundial 2026.html

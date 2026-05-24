@@ -11,17 +11,31 @@ export default async function SignupPage() {
   if (user) redirect("/matches");
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4 py-12">
-      <h1 className="text-center font-headline text-5xl text-cesped">Únete a la Polla</h1>
-      <p className="mt-2 text-center text-carbon/70">
-        Necesitas el código familiar para registrarte.
-      </p>
-      <div className="mt-8">
-        <SignupForm />
+    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-5 py-10">
+      <div className="text-center">
+        <p className="text-2xl" aria-hidden>
+          ⚽
+        </p>
+        <h1 className="mt-2 font-headline text-5xl leading-[0.95] tracking-wide text-cesped">
+          <span className="block">ÚNETE A LA POLLA</span>
+        </h1>
+        <p className="mt-3 text-sm text-carbon/70">
+          Pide a quien organiza la polla un <strong className="text-carbon">código familiar</strong>{" "}
+          para empezar.
+        </p>
       </div>
-      <p className="mt-6 text-center text-sm">
+
+      <div className="mt-8 rounded-xl bg-white p-5 shadow-sm">
+        <h2 className="font-headline text-xl uppercase tracking-wider">Crear cuenta</h2>
+        <p className="mt-1 text-xs text-carbon/60">Vas a aparecer en el ranking con tu nombre.</p>
+        <div className="mt-4">
+          <SignupForm />
+        </div>
+      </div>
+
+      <p className="mt-6 text-center text-sm text-carbon/70">
         ¿Ya tienes cuenta?{" "}
-        <Link href="/login" className="text-cesped underline">
+        <Link href="/login" className="font-medium text-cesped underline">
           Inicia sesión
         </Link>
       </p>

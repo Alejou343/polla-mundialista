@@ -23,8 +23,10 @@ export function StageFilter({ active }: { active: Stage | "all" }) {
             <li key={t.value}>
               <Link
                 href={href}
-                className={`whitespace-nowrap rounded-full px-3 py-1 text-sm transition ${
-                  isActive ? "bg-cesped text-white" : "bg-white text-carbon hover:bg-cesped/10"
+                className={`whitespace-nowrap rounded-full px-3 py-1.5 text-sm transition ${
+                  isActive
+                    ? "bg-cesped text-white shadow-sm"
+                    : "bg-white text-carbon hover:bg-carbon/5"
                 }`}
               >
                 {t.label}

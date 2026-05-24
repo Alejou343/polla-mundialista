@@ -1,57 +1,66 @@
 import type { Bet, Profile } from "@/lib/types";
+import { Avatar } from "./Avatar";
+import { PointsBadge } from "./PointsBadge";
 
-type BetWithProfile = Bet & { profiles: Pick<Profile, "display_name"> | null };
+type BetWithProfile = Bet & {
+  profiles: Pick<Profile, "display_name"> | null;
+};
 
 export function BetsList({
   bets,
   realHome,
   realAway,
+  currentUserId,
 }: {
   bets: BetWithProfile[];
   realHome: number | null;
   realAway: number | null;
+  currentUserId: string;
 }) {
   if (!bets.length) {
     return (
-      <p className="rounded-lg bg-white p-4 text-sm text-carbon/60">
+      <p className="rounded-xl bg-white p-4 text-sm text-carbon/60 shadow-sm">
         Aún nadie había apostado a este partido.
       </p>
     );
   }
   return (
-    <ul className="divide-y divide-carbon/5 rounded-lg bg-white">
+    <ul className="divide-y divide-carbon/5 overflow-hidden rounded-xl bg-white shadow-sm">
       {bets.map((b) => {
-        const exact =
+        const isMine = b.user_id === currentUserId;
+        const name = b.profiles?.display_name ?? "Familiar";
+        const hasResult = realHome !== null && realAway !== null && b.points_earned !== null;
+        const exactPending =
+          !hasResult &&
           realHome !== null &&
           realAway !== null &&
           b.predicted_home_score === realHome &&
           b.predicted_away_score === realAway;
         return (
-          <li key={b.id} className="flex items-center justify-between px-4 py-2 text-sm">
-            <span className="truncate font-medium">{b.profiles?.display_name ?? "Familiar"}</span>
-            <span className="flex items-center gap-2">
+          <li
+            key={b.id}
+            className={`flex items-center justify-between gap-2 px-3 py-2 text-sm ${
+              isMine ? "bg-trofeo/10" : ""
+            }`}
+          >
+            <span className="flex min-w-0 items-center gap-2">
+              <Avatar name={name} size="sm" />
+              <span className="truncate font-medium">
+                {name}
+                {isMine && <span className="ml-1 text-[10px] font-normal text-cesped">(tú)</span>}
+              </span>
+            </span>
+            <span className="flex items-center gap-2 whitespace-nowrap">
               <span className="font-headline text-lg tabular-nums">
                 {b.predicted_home_score}-{b.predicted_away_score}
               </span>
-              {b.points_earned !== null ? (
-                <span
-                  className={`rounded px-1.5 py-0.5 text-xs font-semibold ${
-                    b.points_earned === 3
-                      ? "bg-trofeo/40 text-carbon"
-                      : b.points_earned === 1
-                        ? "bg-cesped/20 text-cesped"
-                        : "bg-cancha/10 text-cancha"
-                  }`}
-                >
-                  +{b.points_earned}
+              {hasResult ? (
+                <PointsBadge value={b.points_earned as 0 | 1 | 3} tone="compact" />
+              ) : exactPending ? (
+                <span className="rounded-full bg-trofeo/40 px-1.5 py-0 text-[10px] font-semibold text-carbon">
+                  🏆
                 </span>
-              ) : (
-                exact && (
-                  <span className="rounded bg-trofeo/40 px-1.5 py-0.5 text-xs font-semibold text-carbon">
-                    🏆
-                  </span>
-                )
-              )}
+              ) : null}
             </span>
           </li>
         );

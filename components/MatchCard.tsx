@@ -1,136 +1,123 @@
 import Link from "next/link";
-import type { Match, Bet } from "@/lib/types";
+import type { Bet, Match } from "@/lib/types";
+import { teamCode, teamDisplay } from "@/lib/teams";
+import { stageLabel, timeShort } from "@/lib/format";
+import { PointsBadge } from "@/components/PointsBadge";
 
-function flag(code: string | null): string {
-  if (!code || code.length !== 3) return "🏳️";
-  const map: Record<string, string> = {
-    MEX: "🇲🇽",
-    USA: "🇺🇸",
-    CAN: "🇨🇦",
-    ARG: "🇦🇷",
-    BRA: "🇧🇷",
-    COL: "🇨🇴",
-    VEN: "🇻🇪",
-    URU: "🇺🇾",
-    ESP: "🇪🇸",
-    POR: "🇵🇹",
-    FRA: "🇫🇷",
-    GER: "🇩🇪",
-    ITA: "🇮🇹",
-    NED: "🇳🇱",
-    BEL: "🇧🇪",
-    ENG: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-    CRO: "🇭🇷",
-    POL: "🇵🇱",
-    MAR: "🇲🇦",
-    JPN: "🇯🇵",
-    KOR: "🇰🇷",
-    AUS: "🇦🇺",
-    SEN: "🇸🇳",
-    ECU: "🇪🇨",
-    SUI: "🇨🇭",
-    DEN: "🇩🇰",
-    SRB: "🇷🇸",
-    GHA: "🇬🇭",
-    CMR: "🇨🇲",
-    CRC: "🇨🇷",
-    TUN: "🇹🇳",
-    KSA: "🇸🇦",
-    IRN: "🇮🇷",
-    QAT: "🇶🇦",
-    WAL: "🏴󠁧󠁢󠁷󠁬󠁳󠁿",
-    SCO: "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
-  };
-  return map[code.toUpperCase()] ?? "🏳️";
-}
-
-function statusBadge(match: Match): { icon: string; label: string; cls: string } {
+function StatusBadge({ match }: { match: Match }) {
   const kickoff = new Date(match.kickoff_time);
   const now = new Date();
   if (match.status === "finished") {
-    return { icon: "⚽", label: "Terminado", cls: "bg-carbon/10 text-carbon" };
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-carbon/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-carbon">
+        ⚽ Final
+      </span>
+    );
   }
   if (kickoff > now) {
-    return { icon: "🟢", label: "Programado", cls: "bg-cesped/10 text-cesped" };
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-cesped/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-cesped">
+        🟢 Programado
+      </span>
+    );
   }
-  return { icon: "🔒", label: "En juego", cls: "bg-cielo/10 text-cielo" };
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-cielo/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-cielo">
+      🔴 En juego
+    </span>
+  );
 }
 
-function timeLabel(iso: string): string {
-  return new Intl.DateTimeFormat("es", {
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(iso));
+function CenterScore({ match }: { match: Match }) {
+  const kickoff = new Date(match.kickoff_time);
+  const now = new Date();
+  const isFinished = match.status === "finished";
+  const isLive =
+    !isFinished && kickoff <= now && match.home_score !== null && match.away_score !== null;
+  if (isFinished || isLive) {
+    return (
+      <div className="text-center leading-none">
+        <div className="font-headline text-4xl tabular-nums">
+          {match.home_score ?? 0}
+          <span className="mx-1 text-carbon/30">–</span>
+          {match.away_score ?? 0}
+        </div>
+        {!isFinished && (
+          <div className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-cancha">
+            • En vivo
+          </div>
+        )}
+      </div>
+    );
+  }
+  return (
+    <div className="text-center leading-none">
+      <div className="font-headline text-3xl text-carbon/40">VS</div>
+      <div className="mt-1 text-xs text-carbon/60 tabular-nums">
+        {timeShort(match.kickoff_time)}
+      </div>
+    </div>
+  );
 }
 
 export function MatchCard({ match, bet }: { match: Match; bet?: Bet | null }) {
-  const badge = statusBadge(match);
-  const showFinal =
-    match.status === "finished" && match.home_score !== null && match.away_score !== null;
+  const kickoff = new Date(match.kickoff_time);
+  const now = new Date();
+  const isOpen = kickoff > now;
 
   return (
     <Link
       href={`/matches/${match.id}`}
-      className="block rounded-xl border border-carbon/10 bg-white p-4 shadow-sm transition hover:border-cesped/40 hover:shadow"
+      className="block rounded-xl border border-carbon/5 bg-white p-4 shadow-sm transition hover:border-cesped/30 hover:shadow"
     >
-      <div className="flex items-center justify-between text-xs text-carbon/60">
-        <span>
-          {match.group_name ? `Grupo ${match.group_name}` : "Eliminación"} ·{" "}
-          {match.venue ?? "Sede por confirmar"}
+      {/* Header: etapa/grupo + estado */}
+      <div className="flex items-center justify-between gap-2">
+        <span className="truncate text-[10px] font-semibold uppercase tracking-wider text-carbon/55">
+          {stageLabel(match.stage, match.group_name)}
         </span>
-        <span>{timeLabel(match.kickoff_time)}</span>
+        <StatusBadge match={match} />
       </div>
-      <div className="mt-2 flex items-center justify-between gap-2">
-        <div className="flex flex-1 items-center gap-2 min-w-0">
-          <span className="text-2xl">{flag(match.home_team_code)}</span>
-          <span className="truncate font-medium">{match.home_team}</span>
+
+      {/* Equipos + score */}
+      <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+        <div className="text-center">
+          <div className="font-headline text-4xl leading-none text-carbon">
+            {teamCode(match.home_team)}
+          </div>
+          <div className="mt-1 truncate text-xs text-carbon/70">{teamDisplay(match.home_team)}</div>
         </div>
-        <div className="px-2 text-center font-headline text-2xl tabular-nums">
-          {showFinal ? (
-            <span>
-              {match.home_score} <span className="text-carbon/40">–</span> {match.away_score}
-            </span>
-          ) : (
-            <span className="text-carbon/30">vs</span>
-          )}
-        </div>
-        <div className="flex flex-1 items-center justify-end gap-2 min-w-0">
-          <span className="truncate text-right font-medium">{match.away_team}</span>
-          <span className="text-2xl">{flag(match.away_team_code)}</span>
+
+        <CenterScore match={match} />
+
+        <div className="text-center">
+          <div className="font-headline text-4xl leading-none text-carbon">
+            {teamCode(match.away_team)}
+          </div>
+          <div className="mt-1 truncate text-xs text-carbon/70">{teamDisplay(match.away_team)}</div>
         </div>
       </div>
-      <div className="mt-3 flex items-center justify-between">
-        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${badge.cls}`}>
-          {badge.icon} {badge.label}
-        </span>
-        {bet ? (
-          <span className="text-xs text-carbon/60">
-            Tu apuesta:{" "}
-            <strong className="text-carbon">
-              {bet.predicted_home_score}-{bet.predicted_away_score}
-            </strong>
-            {bet.points_earned !== null && (
-              <span
-                className={`ml-2 rounded px-1.5 py-0.5 font-semibold ${
-                  bet.points_earned === 3
-                    ? "bg-trofeo/30 text-carbon"
-                    : bet.points_earned === 1
-                      ? "bg-cesped/20 text-cesped"
-                      : "bg-cancha/10 text-cancha"
-                }`}
-              >
-                +{bet.points_earned} pt{bet.points_earned === 1 ? "" : "s"}
+
+      {/* Footer: sede + apuesta */}
+      <div className="mt-3 flex items-center justify-between gap-2 text-xs text-carbon/60">
+        <span className="truncate">📍 {match.venue ?? "Sede por confirmar"}</span>
+        <span className="flex items-center gap-1.5 whitespace-nowrap">
+          {bet ? (
+            <>
+              <span>
+                Tu apuesta:{" "}
+                <strong className="text-carbon tabular-nums">
+                  {bet.predicted_home_score}-{bet.predicted_away_score}
+                </strong>
               </span>
-            )}
-          </span>
-        ) : (
-          new Date(match.kickoff_time) > new Date() && (
-            <span className="text-xs text-cesped">⚡ Aún no apuestas</span>
-          )
-        )}
+              {bet.points_earned !== null && (
+                <PointsBadge value={bet.points_earned as 0 | 1 | 3} tone="compact" />
+              )}
+            </>
+          ) : isOpen ? (
+            <span className="text-cesped">⚡ Aún no apuestas</span>
+          ) : null}
+        </span>
       </div>
     </Link>
   );
 }
-
-export { flag };

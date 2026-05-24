@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from "react";
 import type { Match } from "@/lib/types";
+import { teamCode, teamDisplay } from "@/lib/teams";
+import { stageLabel, timeShort, dayShort } from "@/lib/format";
 
 export function AdminMatchRow({ match }: { match: Match }) {
   const [home, setHome] = useState<string>(match.home_score?.toString() ?? "");
@@ -29,36 +31,39 @@ export function AdminMatchRow({ match }: { match: Match }) {
       } else {
         setMsg({
           ok: true,
-          text: `Guardado. ${json.betsRecalculated ?? 0} apuestas recalculadas.`,
+          text: `Guardado · ${json.betsRecalculated ?? 0} puntuaciones recalculadas`,
         });
       }
     });
   }
 
   return (
-    <div className="rounded-lg border border-carbon/10 bg-white p-3">
-      <div className="flex items-center justify-between text-xs text-carbon/60">
-        <span>
-          M{match.match_number} ·{" "}
-          {new Intl.DateTimeFormat("es", {
-            day: "2-digit",
-            month: "short",
-            hour: "2-digit",
-            minute: "2-digit",
-          }).format(new Date(match.kickoff_time))}
+    <div className="rounded-xl bg-white p-3 shadow-sm">
+      <div className="flex items-center justify-between gap-2 text-[10px] font-semibold uppercase tracking-wider text-carbon/55">
+        <span className="truncate">{stageLabel(match.stage, match.group_name)}</span>
+        <span className="whitespace-nowrap text-carbon/55">
+          {timeShort(match.kickoff_time)} · {dayShort(match.kickoff_time)}
         </span>
-        <span>{match.status}</span>
       </div>
-      <div className="mt-2 grid grid-cols-[1fr_auto_auto_auto_1fr] items-center gap-2">
-        <span className="truncate text-right text-sm font-medium">{match.home_team}</span>
+
+      <div className="mt-2 grid grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-2">
+        <span className="text-right">
+          <span className="block font-headline text-base leading-none">
+            {teamCode(match.home_team)}
+          </span>
+          <span className="block truncate text-[10px] text-carbon/60">
+            {teamDisplay(match.home_team)}
+          </span>
+        </span>
         <input
           type="number"
           min={0}
           max={30}
           value={home}
           onChange={(e) => setHome(e.target.value)}
-          className="w-14 rounded border border-carbon/20 px-2 py-1 text-center font-headline text-xl"
+          className="w-full rounded-md border border-carbon/15 bg-marfil px-2 py-1.5 text-center font-headline text-2xl tabular-nums focus:border-cesped focus:outline-none focus:ring-2 focus:ring-cesped/30"
           inputMode="numeric"
+          aria-label={`Marcador ${teamDisplay(match.home_team)}`}
         />
         <span className="text-carbon/40">–</span>
         <input
@@ -67,18 +72,37 @@ export function AdminMatchRow({ match }: { match: Match }) {
           max={30}
           value={away}
           onChange={(e) => setAway(e.target.value)}
-          className="w-14 rounded border border-carbon/20 px-2 py-1 text-center font-headline text-xl"
+          className="w-full rounded-md border border-carbon/15 bg-marfil px-2 py-1.5 text-center font-headline text-2xl tabular-nums focus:border-cesped focus:outline-none focus:ring-2 focus:ring-cesped/30"
           inputMode="numeric"
+          aria-label={`Marcador ${teamDisplay(match.away_team)}`}
         />
-        <span className="truncate text-sm font-medium">{match.away_team}</span>
+        <span className="text-left">
+          <span className="block font-headline text-base leading-none">
+            {teamCode(match.away_team)}
+          </span>
+          <span className="block truncate text-[10px] text-carbon/60">
+            {teamDisplay(match.away_team)}
+          </span>
+        </span>
       </div>
+
       <div className="mt-2 flex items-center justify-between gap-2">
-        <button onClick={save} disabled={pending} className="btn-primary px-3 py-1 text-sm">
+        {msg ? (
+          <span className={`truncate text-[11px] ${msg.ok ? "text-cesped" : "text-cancha"}`}>
+            {msg.ok ? "✓" : "✗"} {msg.text}
+          </span>
+        ) : (
+          <span className="text-[11px] text-carbon/55">
+            {match.status === "finished" ? "Resultado guardado" : "Sin resultado"}
+          </span>
+        )}
+        <button
+          onClick={save}
+          disabled={pending}
+          className="rounded-md bg-carbon px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+        >
           {pending ? "Guardando…" : "Guardar y recalcular"}
         </button>
-        {msg && (
-          <span className={`text-xs ${msg.ok ? "text-cesped" : "text-cancha"}`}>{msg.text}</span>
-        )}
       </div>
     </div>
   );
