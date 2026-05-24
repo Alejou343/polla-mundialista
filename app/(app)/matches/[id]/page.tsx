@@ -7,6 +7,7 @@ import { PointsBadge } from "@/components/PointsBadge";
 import { Flag } from "@/components/Flag";
 import { Countdown } from "@/components/Countdown";
 import { AutoRefreshOnExpire } from "@/components/AutoRefreshOnExpire";
+import { ExactScoreCelebration } from "@/components/ExactScoreCelebration";
 import { teamCode, teamDisplay } from "@/lib/teams";
 import { stageLabel, dateTimeFull, timeShort } from "@/lib/format";
 import { computeMatchState, liveMinutesElapsed } from "@/lib/match-state";
@@ -236,6 +237,9 @@ export default async function MatchDetailPage({ params }: { params: { id: string
             )}
           </div>
         )}
+
+        {/* Celebración de marcador exacto — se dispara una sola vez por partido */}
+        {isFinished && yourPoints === 3 && <ExactScoreCelebration matchId={match.id} />}
       </section>
 
       {/* Apuestas de la familia */}

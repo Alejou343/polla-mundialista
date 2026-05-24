@@ -19,9 +19,15 @@ export function BetsList({
 }) {
   if (!bets.length) {
     return (
-      <p className="rounded-xl bg-white p-4 text-sm text-carbon/60 shadow-sm">
-        Aún nadie había apostado a este partido.
-      </p>
+      <div className="rounded-xl bg-white px-6 py-8 text-center shadow-sm">
+        <p className="text-5xl" aria-hidden>
+          😶
+        </p>
+        <p className="mt-3 font-headline text-xl uppercase tracking-wide text-carbon">
+          Nadie apostó este partido
+        </p>
+        <p className="mt-1 text-sm text-carbon/60">La familia se quedó sin apostar. ¡La próxima!</p>
+      </div>
     );
   }
   return (

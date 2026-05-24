@@ -84,9 +84,17 @@ export default async function AdminPage() {
           {matchList.length ? (
             matchList.map((m) => <AdminMatchRow key={m.id} match={m} />)
           ) : (
-            <p className="rounded-xl bg-white p-4 text-sm text-carbon/60 shadow-sm">
-              Aún no hay partidos cargados.
-            </p>
+            <div className="rounded-xl bg-white px-6 py-10 text-center shadow-sm">
+              <p className="text-5xl" aria-hidden>
+                📋
+              </p>
+              <p className="mt-3 font-headline text-2xl uppercase tracking-wide text-carbon">
+                Sin partidos cargados
+              </p>
+              <p className="mt-1 text-sm text-carbon/60">
+                Usá el cron de sincronización o cargá un partido manualmente para empezar.
+              </p>
+            </div>
           )}
         </div>
       </section>

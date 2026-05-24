@@ -12,9 +12,17 @@ export function RankingTable({
 }) {
   if (entries.length === 0) {
     return (
-      <p className="rounded-xl bg-white p-4 text-sm text-carbon/60 shadow-sm">
-        Aún no hay participantes.
-      </p>
+      <div className="rounded-xl bg-white px-6 py-10 text-center shadow-sm">
+        <p className="text-5xl" aria-hidden>
+          🏆
+        </p>
+        <p className="mt-3 font-headline text-2xl uppercase tracking-wide text-carbon">
+          El ranking está vacío
+        </p>
+        <p className="mt-1 text-sm text-carbon/60">
+          Cuando alguien apueste y los partidos terminen, acá verás los puntajes.
+        </p>
+      </div>
     );
   }
   return (

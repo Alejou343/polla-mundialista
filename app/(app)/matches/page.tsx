@@ -102,23 +102,23 @@ export default async function MatchesPage({
       <StageFilter activeStage={stage} activeView={view} pendingCount={pendingCount} />
 
       {totalVisible === 0 && (
-        <div className="rounded-xl bg-white p-8 text-center shadow-sm">
+        <div className="rounded-xl bg-white px-6 py-10 text-center shadow-sm">
           {view === "pending" ? (
             <>
-              <p className="text-3xl" aria-hidden>
+              <p className="text-5xl" aria-hidden>
                 ✅
               </p>
-              <p className="mt-2 font-headline text-xl uppercase tracking-wide">¡Estás al día!</p>
+              <p className="mt-3 font-headline text-2xl uppercase tracking-wide">¡Estás al día!</p>
               <p className="mt-1 text-sm text-carbon/60">
                 No te falta ninguna apuesta. Volvé cuando se publiquen más partidos.
               </p>
             </>
           ) : view === "played" ? (
             <>
-              <p className="text-3xl" aria-hidden>
+              <p className="text-5xl" aria-hidden>
                 ⚽
               </p>
-              <p className="mt-2 font-headline text-xl uppercase tracking-wide">
+              <p className="mt-3 font-headline text-2xl uppercase tracking-wide">
                 Aún no hay partidos jugados
               </p>
               <p className="mt-1 text-sm text-carbon/60">
@@ -127,10 +127,10 @@ export default async function MatchesPage({
             </>
           ) : (
             <>
-              <p className="text-3xl" aria-hidden>
+              <p className="text-5xl" aria-hidden>
                 📅
               </p>
-              <p className="mt-2 font-headline text-xl uppercase tracking-wide">Sin partidos</p>
+              <p className="mt-3 font-headline text-2xl uppercase tracking-wide">Sin partidos</p>
               <p className="mt-1 text-sm text-carbon/60">Aún no hay partidos para esta etapa.</p>
             </>
           )}
