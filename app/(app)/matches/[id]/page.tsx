@@ -4,34 +4,45 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { BetForm } from "./bet-form";
 import { BetsList } from "@/components/BetsList";
 import { PointsBadge } from "@/components/PointsBadge";
-import { teamDisplay } from "@/lib/teams";
 import { Flag } from "@/components/Flag";
+import { Countdown } from "@/components/Countdown";
+import { AutoRefreshOnExpire } from "@/components/AutoRefreshOnExpire";
+import { teamCode, teamDisplay } from "@/lib/teams";
 import { stageLabel, dateTimeFull, timeShort } from "@/lib/format";
+import { computeMatchState, liveMinutesElapsed } from "@/lib/match-state";
 import { calculatePoints } from "@/lib/scoring";
 import type { Bet, Match } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-function HeaderStatus({ match }: { match: Match }) {
-  const kickoff = new Date(match.kickoff_time);
-  const now = new Date();
-  if (match.status === "finished") {
+function HeaderBadge({ match }: { match: Match }) {
+  const state = computeMatchState(match);
+  if (state === "finished") {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-carbon/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-carbon">
         ⚽ Final
       </span>
     );
   }
-  if (kickoff > now) {
+  if (state === "live") {
+    const min = liveMinutesElapsed(match.kickoff_time);
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-cesped/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-cesped">
-        🟢 Programado
+      <span className="inline-flex items-center gap-1 rounded-full bg-cancha/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-cancha">
+        <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-cancha" />
+        En vivo · Min {min}
+      </span>
+    );
+  }
+  if (state === "closing-soon") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-cancha/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-cancha">
+        ⏰ Cierra pronto
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-cielo/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-cielo">
-      🔴 En juego
+    <span className="inline-flex items-center gap-1 rounded-full bg-cesped/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-cesped">
+      🟢 Programado
     </span>
   );
 }
@@ -61,13 +72,13 @@ export default async function MatchDetailPage({ params }: { params: { id: string
     .maybeSingle();
   const myBet = (myBetData ?? null) as Bet | null;
 
-  const now = new Date();
-  const kickoff = new Date(match.kickoff_time);
-  const isLocked = kickoff <= now;
-  const isFinished = match.status === "finished";
+  const state = computeMatchState(match);
+  const isOpen = state === "upcoming" || state === "closing-soon";
+  const isFinished = state === "finished";
+  const isLive = state === "live";
+  const isLocked = !isOpen;
 
-  // Apuestas ajenas: RLS las filtra; pedirlas siempre. Antes de kickoff solo
-  // devuelve la propia. Orden: exactos primero, luego resultados, luego ceros.
+  // Apuestas ajenas — RLS las filtra. Antes de kickoff solo devuelve la propia.
   const { data: othersBetsData } = isLocked
     ? await supabase
         .from("bets")
@@ -88,10 +99,13 @@ export default async function MatchDetailPage({ params }: { params: { id: string
         )
       : null;
 
-  const showFinalScore = isFinished && match.home_score !== null && match.away_score !== null;
+  const showScore = isLocked && match.home_score !== null && match.away_score !== null;
 
   return (
     <div className="mx-auto max-w-screen-sm px-4 py-6">
+      {/* Auto-refresh la página justo después del kickoff para mostrar locked */}
+      {isOpen && <AutoRefreshOnExpire isoTarget={match.kickoff_time} />}
+
       <Link
         href="/matches"
         className="inline-flex items-center gap-1 text-sm text-carbon/60 transition hover:text-cesped"
@@ -105,14 +119,15 @@ export default async function MatchDetailPage({ params }: { params: { id: string
           <span className="text-[10px] font-semibold uppercase tracking-wider text-carbon/55">
             {stageLabel(match.stage, match.group_name)}
           </span>
-          <HeaderStatus match={match} />
+          <HeaderBadge match={match} />
         </div>
 
         <p className="mt-3 text-center text-xs text-carbon/60">
           📍 {match.venue ?? "Sede por confirmar"}
         </p>
         <p className="text-center text-xs font-medium uppercase tracking-wider text-carbon/70">
-          {dateTimeFull(match.kickoff_time)}
+          {dateTimeFull(match.kickoff_time)}{" "}
+          <span className="font-normal normal-case text-carbon/50">(hora Colombia)</span>
         </p>
 
         <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
@@ -124,22 +139,22 @@ export default async function MatchDetailPage({ params }: { params: { id: string
           </div>
 
           <div className="text-center">
-            {showFinalScore ? (
+            {showScore ? (
               <div className="font-headline text-7xl leading-none tabular-nums">
                 {match.home_score}
                 <span className="mx-2 text-carbon/30">–</span>
                 {match.away_score}
               </div>
-            ) : isLocked ? (
-              <div className="font-headline text-7xl leading-none tabular-nums">
-                {match.home_score ?? 0}
+            ) : isLive ? (
+              <div className="font-headline text-7xl leading-none tabular-nums text-cancha">
+                <span className="text-carbon/40">—</span>
                 <span className="mx-2 text-carbon/30">–</span>
-                {match.away_score ?? 0}
+                <span className="text-carbon/40">—</span>
               </div>
             ) : (
               <div className="font-headline text-5xl leading-none text-carbon/40">VS</div>
             )}
-            {!isFinished && (
+            {isOpen && (
               <div className="mt-2 text-xs text-carbon/60 tabular-nums">
                 {timeShort(match.kickoff_time)}
               </div>
@@ -157,14 +172,36 @@ export default async function MatchDetailPage({ params }: { params: { id: string
 
       {/* Tu apuesta */}
       <section className="mt-6">
-        <div className="mb-2 flex items-center justify-between">
+        <div className="mb-2 flex items-center justify-between gap-2">
           <h2 className="font-headline text-xl uppercase tracking-wider">Tu apuesta</h2>
-          {!isLocked && <span className="text-xs text-carbon/55">Cierra al pitazo inicial</span>}
+          {isOpen ? (
+            <Countdown
+              isoTarget={match.kickoff_time}
+              prefix="Cierra en "
+              expiredText="🔒 Acaba de cerrar"
+              className={
+                state === "closing-soon"
+                  ? "text-xs font-semibold text-cancha"
+                  : "text-xs text-carbon/55"
+              }
+            />
+          ) : isLive ? (
+            <span className="text-xs font-semibold text-cancha">🔒 Cerrada — partido en curso</span>
+          ) : (
+            <span className="text-xs text-carbon/55">Partido terminado</span>
+          )}
         </div>
 
-        {!isLocked && <BetForm matchId={match.id} existing={myBet} />}
+        {isOpen && (
+          <BetForm
+            matchId={match.id}
+            existing={myBet}
+            homeTeamShort={teamCode(match.home_team)}
+            awayTeamShort={teamCode(match.away_team)}
+          />
+        )}
 
-        {isLocked && !isFinished && (
+        {isLive && (
           <div className="rounded-xl bg-white p-4 shadow-sm">
             {myBet ? (
               <p className="text-sm">
@@ -174,10 +211,10 @@ export default async function MatchDetailPage({ params }: { params: { id: string
                 </strong>
               </p>
             ) : (
-              <p className="text-sm text-carbon/60">No alcanzaste a apostar 😬.</p>
+              <p className="text-sm text-carbon/60">No alcanzaste a apostar 😬</p>
             )}
-            <p className="mt-1 text-xs text-cielo">
-              🔒 Apuestas cerradas — partido en curso o por iniciar
+            <p className="mt-1 text-xs text-cancha">
+              🔒 Apuestas cerradas — ya empezó el partido. Esperá al final para ver los puntos.
             </p>
           </div>
         )}

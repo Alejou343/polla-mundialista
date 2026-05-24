@@ -16,12 +16,14 @@ export function stageLabel(stage: Stage, groupName: string | null): string {
   return map[stage];
 }
 
-const TIME_FMT = new Intl.DateTimeFormat("es", {
+const TIME_FMT = new Intl.DateTimeFormat("es-CO", {
+  timeZone: "America/Bogota",
   hour: "2-digit",
   minute: "2-digit",
 });
 
-const FULL_FMT = new Intl.DateTimeFormat("es", {
+const FULL_FMT = new Intl.DateTimeFormat("es-CO", {
+  timeZone: "America/Bogota",
   weekday: "long",
   day: "numeric",
   month: "long",
@@ -29,19 +31,22 @@ const FULL_FMT = new Intl.DateTimeFormat("es", {
   minute: "2-digit",
 });
 
-const DAY_FMT = new Intl.DateTimeFormat("es", {
+const DAY_FMT = new Intl.DateTimeFormat("es-CO", {
+  timeZone: "America/Bogota",
   weekday: "long",
   day: "numeric",
   month: "long",
 });
 
-const DAY_SHORT_FMT = new Intl.DateTimeFormat("es", {
+const DAY_SHORT_FMT = new Intl.DateTimeFormat("es-CO", {
+  timeZone: "America/Bogota",
   weekday: "short",
   day: "numeric",
   month: "short",
 });
 
-const MONTH_YEAR_FMT = new Intl.DateTimeFormat("es", {
+const MONTH_YEAR_FMT = new Intl.DateTimeFormat("es-CO", {
+  timeZone: "America/Bogota",
   year: "numeric",
   month: "long",
 });
@@ -67,12 +72,11 @@ export function monthYear(iso: string): string {
 }
 
 /**
- * TZ canónica del torneo. Mundial 2026 se juega en USA/MX/CA (UTC-4 a UTC-8).
- * Mexico City (UTC-6) es la TZ de referencia para agrupar y mostrar fechas
- * "del partido". Evita que un match nocturno aparezca como "el día siguiente"
- * por estar en madrugada UTC.
+ * TZ del usuario final: Colombia (UTC-5). Todos los horarios visibles —
+ * agrupación por día, horas de inicio, countdowns — se expresan en esta TZ
+ * para que la familia vea lo mismo sin importar dónde esté.
  */
-export const TOURNAMENT_TZ = "America/Mexico_City";
+export const TOURNAMENT_TZ = "America/Bogota";
 
 const TOURNAMENT_DAY_KEY_FMT = new Intl.DateTimeFormat("en-CA", {
   timeZone: TOURNAMENT_TZ,
@@ -81,7 +85,7 @@ const TOURNAMENT_DAY_KEY_FMT = new Intl.DateTimeFormat("en-CA", {
   day: "2-digit",
 });
 
-const TOURNAMENT_DAY_LONG_FMT = new Intl.DateTimeFormat("es", {
+const TOURNAMENT_DAY_LONG_FMT = new Intl.DateTimeFormat("es-CO", {
   timeZone: TOURNAMENT_TZ,
   weekday: "long",
   day: "numeric",
