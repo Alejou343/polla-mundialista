@@ -26,15 +26,25 @@ try {
   // ok: variables ya pueden venir del entorno
 }
 
+import { createClient } from "@supabase/supabase-js";
 import { fetchFixtures } from "@/lib/openfootball";
-import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 
 async function main() {
   console.log("⬇️  Descargando fixtures desde openfootball…");
   const fixtures = await fetchFixtures();
   console.log(`   Recibidos ${fixtures.length} partidos.`);
 
-  const admin = createAdminSupabaseClient();
+  // Inline admin client: lib/supabase/admin.ts importa 'server-only' que
+  // explota fuera del bundler de Next. Este script corre en Node puro.
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRole = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceRole) {
+    console.error("❌ Faltan NEXT_PUBLIC_SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY en .env.local");
+    process.exit(1);
+  }
+  const admin = createClient(url, serviceRole, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
 
   const rows = fixtures.map((m) => ({
     id: m.id,

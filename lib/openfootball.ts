@@ -1,51 +1,53 @@
 import { z } from "zod";
 import type { Stage } from "./types";
 
-const TeamSchema = z.union([
-  z.string(),
-  z.object({
-    name: z.string(),
-    code: z.string().optional(),
-  }),
-]);
-
-const ScoreSchema = z
-  .object({
-    ft: z.tuple([z.number(), z.number()]).optional(),
-  })
-  .nullable()
-  .optional();
-
-const StadiumSchema = z
-  .union([
-    z.string(),
-    z.object({
-      name: z.string(),
-      city: z.string().optional(),
-    }),
-  ])
-  .optional();
-
+/**
+ * Estructura real de https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json
+ *
+ * {
+ *   "name": "World Cup 2026",
+ *   "matches": [
+ *     {
+ *       "round": "Matchday 1",
+ *       "date": "2026-06-11",
+ *       "time": "13:00 UTC-6",
+ *       "team1": "Mexico",
+ *       "team2": "South Africa",
+ *       "group": "Group A",
+ *       "ground": "Mexico City"
+ *     },
+ *     {
+ *       "round": "Round of 32",
+ *       "num": 73,
+ *       "date": "2026-06-28",
+ *       "time": "12:00 UTC-7",
+ *       "team1": "2A",    // placeholder hasta que se conozcan los clasificados
+ *       "team2": "2B",
+ *       "ground": "Los Angeles (Inglewood)"
+ *     }
+ *   ]
+ * }
+ */
 const RawMatchSchema = z.object({
-  num: z.number().int(),
+  round: z.string(),
+  num: z.number().int().optional(),
   date: z.string(),
-  time: z.string().optional(),
-  team1: TeamSchema,
-  team2: TeamSchema,
+  time: z.string(),
+  team1: z.string(),
+  team2: z.string(),
   group: z.string().optional(),
-  stage: z.string().optional(),
-  stadium: StadiumSchema,
-  score: ScoreSchema,
-});
-
-const RoundSchema = z.object({
-  name: z.string(),
-  matches: z.array(RawMatchSchema),
+  ground: z.string().optional(),
+  score: z
+    .object({
+      ft: z.tuple([z.number(), z.number()]).optional(),
+    })
+    .nullable()
+    .optional(),
 });
 
 const WorldCupSchema = z.object({
   name: z.string().optional(),
-  rounds: z.array(RoundSchema),
+  matches: z.array(RawMatchSchema),
 });
 
 export type ParsedMatch = {
@@ -67,62 +69,73 @@ export type ParsedMatch = {
 const OPENFOOTBALL_URL =
   "https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json";
 
-function inferStage(roundName: string, hasGroup: boolean): Stage {
-  const n = roundName.toLowerCase().trim();
-  if (n.includes("third") || n.includes("3rd")) return "third";
-  if (n === "final" || n.endsWith(" final")) return "final";
-  if (n.includes("semi")) return "sf";
-  if (n.includes("quarter") || n.includes("qf")) return "qf";
-  if (n.includes("round of 16") || n.includes("r16") || n.includes("eighth")) return "r16";
-  if (n.includes("round of 32") || n.includes("r32")) return "r32";
-  return hasGroup ? "group" : "group";
+function stageFor(round: string): Stage {
+  const r = round.toLowerCase().trim();
+  if (r === "final") return "final";
+  if (r.includes("third") || r.includes("3rd")) return "third";
+  if (r.includes("semi")) return "sf";
+  if (r.includes("quarter")) return "qf";
+  if (r.includes("round of 16") || r.includes("r16")) return "r16";
+  if (r.includes("round of 32") || r.includes("r32")) return "r32";
+  return "group";
 }
 
-function teamName(t: z.infer<typeof TeamSchema>): string {
-  return typeof t === "string" ? t : t.name;
+function groupLetter(group: string | undefined): string | null {
+  if (!group) return null;
+  const m = group.match(/group\s+([a-z])/i);
+  return m ? m[1].toUpperCase() : group;
 }
 
-function teamCode(t: z.infer<typeof TeamSchema>): string | null {
-  return typeof t === "string" ? null : (t.code ?? null);
+function slugify(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "");
 }
 
-function venueName(v: z.infer<typeof StadiumSchema>): string | null {
-  if (!v) return null;
-  return typeof v === "string" ? v : v.name;
+/** ID determinístico — estable entre syncs (sobrevive a cambios de fecha/sede). */
+function makeId(round: string, team1: string, team2: string): string {
+  return `WC2026-${slugify(round)}-${slugify(team1)}-${slugify(team2)}`;
+}
+
+/** Parsea "13:00 UTC-6" o "20:00 UTC+1" o "12:00" a ISO UTC. */
+function parseKickoffISO(date: string, time: string): string {
+  const m = time.trim().match(/^(\d{1,2}):(\d{2})(?:\s+UTC\s*([+-]?\d{1,2}))?$/);
+  if (!m) throw new Error(`openfootball: hora inválida "${time}"`);
+  const hh = parseInt(m[1], 10);
+  const mm = parseInt(m[2], 10);
+  const offset = m[3] ? parseInt(m[3], 10) : 0;
+  const baseUTC = new Date(`${date}T00:00:00Z`).getTime();
+  if (Number.isNaN(baseUTC)) {
+    throw new Error(`openfootball: fecha inválida "${date}"`);
+  }
+  // hora local = UTC + offset ⇒ UTC = local - offset
+  const ms = baseUTC + (hh - offset) * 3_600_000 + mm * 60_000;
+  return new Date(ms).toISOString();
 }
 
 export function parseFixtures(raw: unknown): ParsedMatch[] {
   const data = WorldCupSchema.parse(raw);
-  const matches: ParsedMatch[] = [];
-  for (const round of data.rounds) {
-    for (const m of round.matches) {
-      const groupName = m.group ?? null;
-      const stage = inferStage(round.name, !!groupName);
-      // openfootball no siempre incluye timezone. Asumimos UTC; el admin puede ajustar.
-      const timeStr = m.time ?? "12:00";
-      const kickoffDate = new Date(`${m.date}T${timeStr}:00Z`);
-      if (Number.isNaN(kickoffDate.getTime())) {
-        throw new Error(`openfootball: fecha inválida en match ${m.num}: ${m.date} ${timeStr}`);
-      }
-      const ft = m.score?.ft;
-      matches.push({
-        id: `WC2026-M${String(m.num).padStart(3, "0")}`,
-        stage,
-        group_name: groupName,
-        match_number: m.num,
-        home_team: teamName(m.team1),
-        away_team: teamName(m.team2),
-        home_team_code: teamCode(m.team1),
-        away_team_code: teamCode(m.team2),
-        venue: venueName(m.stadium),
-        kickoff_time: kickoffDate.toISOString(),
-        status: ft ? "finished" : "scheduled",
-        home_score: ft ? ft[0] : null,
-        away_score: ft ? ft[1] : null,
-      });
-    }
-  }
-  return matches;
+  return data.matches.map((m, idx) => {
+    const ft = m.score?.ft;
+    return {
+      id: makeId(m.round, m.team1, m.team2),
+      stage: stageFor(m.round),
+      group_name: groupLetter(m.group),
+      match_number: m.num ?? idx + 1,
+      home_team: m.team1,
+      away_team: m.team2,
+      home_team_code: null,
+      away_team_code: null,
+      venue: m.ground ?? null,
+      kickoff_time: parseKickoffISO(m.date, m.time),
+      status: ft ? "finished" : "scheduled",
+      home_score: ft ? ft[0] : null,
+      away_score: ft ? ft[1] : null,
+    };
+  });
 }
 
 export async function fetchFixtures(url: string = OPENFOOTBALL_URL): Promise<ParsedMatch[]> {
