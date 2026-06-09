@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { AdminMatchRow } from "./admin-match-row";
+import { AdminMatchList } from "./admin-match-list";
 import { CopyButton } from "@/components/CopyButton";
 import type { Match } from "@/lib/types";
 
@@ -40,8 +40,7 @@ export default async function AdminPage() {
   const { data: matches } = await supabase
     .from("matches")
     .select("*")
-    .order("kickoff_time", { ascending: false })
-    .limit(50);
+    .order("kickoff_time", { ascending: false });
 
   const inviteCode = process.env.FAMILY_INVITE_CODE ?? "(env no configurada)";
   const matchList = (matches ?? []) as Match[];
@@ -74,29 +73,29 @@ export default async function AdminPage() {
       <section>
         <div className="mb-3 flex items-end justify-between gap-2">
           <h2 className="font-headline text-xl uppercase tracking-wider">Editar resultados</h2>
-          <span className="text-[11px] text-carbon/55">Últimos {matchList.length}</span>
+          <span className="text-[11px] text-carbon/55">
+            {matchList.length} {matchList.length === 1 ? "partido" : "partidos"}
+          </span>
         </div>
         <p className="mb-3 text-xs text-carbon/60">
           Útil si el sync automático falla. Al guardar se recalculan los puntos de todas las
-          apuestas de ese partido.
+          apuestas del partido.
         </p>
-        <div className="space-y-2">
-          {matchList.length ? (
-            matchList.map((m) => <AdminMatchRow key={m.id} match={m} />)
-          ) : (
-            <div className="rounded-xl bg-white px-6 py-10 text-center shadow-sm">
-              <p className="text-5xl" aria-hidden>
-                📋
-              </p>
-              <p className="mt-3 font-headline text-2xl uppercase tracking-wide text-carbon">
-                Sin partidos cargados
-              </p>
-              <p className="mt-1 text-sm text-carbon/60">
-                Usá el cron de sincronización o cargá un partido manualmente para empezar.
-              </p>
-            </div>
-          )}
-        </div>
+        {matchList.length ? (
+          <AdminMatchList matches={matchList} />
+        ) : (
+          <div className="rounded-xl bg-white px-6 py-10 text-center shadow-sm">
+            <p className="text-5xl" aria-hidden>
+              📋
+            </p>
+            <p className="mt-3 font-headline text-2xl uppercase tracking-wide text-carbon">
+              Sin partidos cargados
+            </p>
+            <p className="mt-1 text-sm text-carbon/60">
+              Usá el cron de sincronización o cargá un partido manualmente para empezar.
+            </p>
+          </div>
+        )}
       </section>
     </div>
   );
