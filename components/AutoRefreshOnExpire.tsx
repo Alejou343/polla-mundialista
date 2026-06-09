@@ -2,19 +2,38 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { getServerDrift, serverNow } from "@/lib/server-time";
 
 /**
- * Cuando llega el kickoff, dispara router.refresh() para que el server
- * re-renderice el match con el estado bloqueado. Sin recargar la pestaña.
+ * Cuando llega el kickoff (según reloj del servidor, no del cliente),
+ * dispara router.refresh() para que la página re-renderice con el match
+ * en estado bloqueado. Si el cliente tiene su reloj alterado, igualmente
+ * el refresh se programa con la hora autoritativa.
  */
 export function AutoRefreshOnExpire({ isoTarget }: { isoTarget: string }) {
   const router = useRouter();
+
   useEffect(() => {
-    const ms = new Date(isoTarget).getTime() - Date.now();
-    if (ms <= 0) return; // ya pasó, el server ya lo manejó
-    // Margen de 1.2s para asegurar que pasó el kickoff antes del refresh.
-    const id = setTimeout(() => router.refresh(), ms + 1200);
-    return () => clearTimeout(id);
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    getServerDrift().then((drift) => {
+      if (cancelled) return;
+      const target = new Date(isoTarget).getTime();
+      const msUntil = target - serverNow(drift);
+      if (msUntil <= 0) {
+        router.refresh();
+        return;
+      }
+      // +1.2s de margen para que el servidor ya vea el kickoff como pasado.
+      timer = setTimeout(() => router.refresh(), msUntil + 1200);
+    });
+
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+    };
   }, [isoTarget, router]);
+
   return null;
 }

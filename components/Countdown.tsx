@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { formatCountdown, msUntilKickoff } from "@/lib/match-state";
+import { formatCountdown } from "@/lib/match-state";
+import { getServerDrift, serverNow } from "@/lib/server-time";
 
 export function Countdown({
   isoTarget,
@@ -16,14 +17,28 @@ export function Countdown({
   prefix?: string;
   expiredText?: string;
 }) {
-  const [ms, setMs] = useState(() => msUntilKickoff(isoTarget));
+  const targetMs = new Date(isoTarget).getTime();
+  const [drift, setDrift] = useState<number>(0);
+  const [ms, setMs] = useState<number>(() => targetMs - Date.now());
 
+  // Fetch drift una sola vez; getServerDrift cachea entre componentes.
   useEffect(() => {
-    const tick = () => setMs(msUntilKickoff(isoTarget));
+    let cancelled = false;
+    getServerDrift().then((d) => {
+      if (!cancelled) setDrift(d);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Tick cada 1s usando hora del servidor.
+  useEffect(() => {
+    const tick = () => setMs(targetMs - serverNow(drift));
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [isoTarget]);
+  }, [targetMs, drift]);
 
   useEffect(() => {
     if (ms <= 0 && onExpire) onExpire();

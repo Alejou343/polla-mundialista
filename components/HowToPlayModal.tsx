@@ -116,9 +116,10 @@ export function HowToPlayModal({ initialOpen = false }: { initialOpen?: boolean 
               🕒
             </span>
             <div>
-              <p className="font-semibold">Hora de Colombia</p>
+              <p className="font-semibold">Hora de Colombia (UTC−5)</p>
               <p className="text-xs text-carbon/70">
-                Todos los horarios se muestran en hora de Colombia (UTC−5).
+                Todos los horarios se calculan con el reloj del servidor — no importa en qué país
+                estés ni qué hora marque tu celular.
               </p>
             </div>
           </div>
