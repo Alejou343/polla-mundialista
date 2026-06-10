@@ -20,6 +20,7 @@ const TIME_FMT = new Intl.DateTimeFormat("es-CO", {
   timeZone: "America/Bogota",
   hour: "2-digit",
   minute: "2-digit",
+  hour12: false,
 });
 
 const FULL_FMT = new Intl.DateTimeFormat("es-CO", {
@@ -29,6 +30,7 @@ const FULL_FMT = new Intl.DateTimeFormat("es-CO", {
   month: "long",
   hour: "2-digit",
   minute: "2-digit",
+  hour12: false,
 });
 
 const DAY_FMT = new Intl.DateTimeFormat("es-CO", {
