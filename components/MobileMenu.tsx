@@ -68,6 +68,7 @@ export function MobileMenu({
   const items: Item[] = [
     { href: "/matches", label: "Partidos", icon: "⚽", badge: pendingCount },
     { href: "/ranking", label: "Ranking", icon: "🏆" },
+    { href: "/diario", label: "Compartir del día", icon: "📲" },
     ...(isAdmin ? [{ href: "/admin", label: "Panel admin", icon: "🛠️" }] : []),
     { href: "/perfil", label: "Mi perfil", icon: "👤" },
   ];
