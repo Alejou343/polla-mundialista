@@ -58,7 +58,7 @@ export function formatDailyDigest(matches: Match[], referenceIso: string): strin
       head,
       "",
       "📭 Hoy no juega nadie del Mundial.",
-      "Aprovechen para revisar las apuestas que vienen 👇",
+      "Aprovechen para revisar las apuestas que vienen ⬇️",
       "",
       `${APP_URL}/matches`,
     ].join("\n");
@@ -91,10 +91,10 @@ export function formatDailyDigest(matches: Match[], referenceIso: string): strin
   // Call to action solo si hay partidos abiertos
   const cta =
     upcoming.length > 0
-      ? ["", "⏱️ *Apuesten antes del pitazo inicial* 👇", `${APP_URL}/matches?view=pending`].join(
+      ? ["", "⏱️ *Apuesten antes del pitazo inicial* ⬇️", `${APP_URL}/matches?view=pending`].join(
           "\n",
         )
-      : ["", `Ver el ranking 👉 ${APP_URL}/ranking`].join("\n");
+      : ["", `Ver el ranking ➡️ ${APP_URL}/ranking`].join("\n");
 
   return [head, "", sections.join("\n\n"), cta].join("\n");
 }
