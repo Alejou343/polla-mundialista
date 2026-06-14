@@ -2,6 +2,7 @@
 
 import { useFormState, useFormStatus } from "react-dom";
 import { useState, useTransition } from "react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import { placeBetAction, deleteBetAction } from "./actions";
 import type { Bet } from "@/lib/types";
 
@@ -47,17 +48,17 @@ function Stepper({
 }) {
   return (
     <div className="flex flex-col items-center">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-carbon/60">
+      <span className="font-headline text-[10px] uppercase tracking-[0.22em] text-ink-muted">
         {label}
       </span>
-      <div className="mt-1 flex items-stretch overflow-hidden rounded-xl border border-carbon/15 bg-marfil">
+      <div className="mt-1.5 flex items-stretch overflow-hidden rounded-card border border-white/10 bg-white/[0.04]">
         <button
           type="button"
           onClick={() => onChange(clamp(value - 1))}
           aria-label={`Restar 1 a ${label}`}
-          className="flex h-16 w-12 items-center justify-center text-2xl text-carbon/70 transition hover:bg-carbon/5 active:bg-carbon/10"
+          className="flex h-16 w-12 items-center justify-center text-ink-soft transition hover:bg-white/5 active:bg-white/10"
         >
-          −
+          <Minus size={20} strokeWidth={2.4} />
         </button>
         <input
           type="number"
@@ -68,15 +69,15 @@ function Stepper({
           max={MAX}
           inputMode="numeric"
           aria-label={`Marcador ${label}`}
-          className="h-16 w-16 border-x border-carbon/10 bg-white text-center font-headline text-4xl tabular-nums text-carbon focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cesped/40"
+          className="h-16 w-16 border-x border-white/10 bg-transparent text-center font-display text-4xl tabular-nums text-trophy-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-trophy-200/40"
         />
         <button
           type="button"
           onClick={() => onChange(clamp(value + 1))}
           aria-label={`Sumar 1 a ${label}`}
-          className="flex h-16 w-12 items-center justify-center text-2xl text-carbon/70 transition hover:bg-carbon/5 active:bg-carbon/10"
+          className="flex h-16 w-12 items-center justify-center text-ink-soft transition hover:bg-white/5 active:bg-white/10"
         >
-          +
+          <Plus size={20} strokeWidth={2.4} />
         </button>
       </div>
     </div>
@@ -111,20 +112,17 @@ export function BetForm({
   }
 
   return (
-    <form action={formAction} className="rounded-xl bg-white p-4 shadow-sm">
+    <form action={formAction} className="surface-card p-4">
       <input type="hidden" name="matchId" value={matchId} />
 
       <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-2">
         <Stepper value={home} onChange={setHome} label={homeTeamShort} name="predictedHome" />
-        <div className="pb-2 font-headline text-3xl text-carbon/30">–</div>
+        <div className="pb-3 font-display text-3xl text-ink-muted/50">–</div>
         <Stepper value={away} onChange={setAway} label={awayTeamShort} name="predictedAway" />
       </div>
 
-      {/* Quick picks */}
-      <div className="mt-4">
-        <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-carbon/55">
-          Marcadores comunes
-        </p>
+      <div className="mt-5">
+        <p className="kicker mb-2">Marcadores comunes</p>
         <ul className="flex flex-wrap gap-1.5">
           {QUICK_PICKS.map(([h, a]) => {
             const isSelected = home === h && away === a;
@@ -136,8 +134,10 @@ export function BetForm({
                     setHome(h);
                     setAway(a);
                   }}
-                  className={`rounded-full px-2.5 py-1 font-headline text-sm tabular-nums transition ${
-                    isSelected ? "bg-cesped text-white" : "bg-marfil text-carbon hover:bg-cesped/10"
+                  className={`rounded-pill px-3 py-1 font-display text-sm tabular-nums transition ${
+                    isSelected
+                      ? "bg-trophy-200 text-stadium shadow-trophy"
+                      : "border border-white/10 bg-white/[0.04] text-ivory hover:bg-white/[0.08]"
                   }`}
                 >
                   {h}-{a}
@@ -149,31 +149,35 @@ export function BetForm({
       </div>
 
       {state?.ok && (
-        <p className="mt-3 rounded-md bg-cesped/10 px-3 py-2 text-sm text-cesped">
+        <p className="mt-4 rounded-card border border-success/30 bg-success/10 px-3 py-2 text-sm text-success-soft">
           ✓ ¡Apuesta guardada!
         </p>
       )}
       {state && !state.ok && (
-        <p className="mt-3 rounded-md bg-cancha/10 px-3 py-2 text-sm text-cancha">{state.error}</p>
+        <p className="mt-4 rounded-card border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger-soft">
+          {state.error}
+        </p>
       )}
 
-      <div className="mt-4 flex items-center gap-2">
+      <div className="mt-5 flex items-center gap-2">
         <SubmitBet existing={existing} />
         {existing && (
           <button
             type="button"
             onClick={onDelete}
             disabled={isDeleting}
-            className="btn-ghost text-cancha"
+            className="btn-danger"
+            aria-label="Eliminar apuesta"
           >
-            {isDeleting ? "Eliminando…" : "Borrar"}
+            <Trash2 size={16} strokeWidth={2.2} aria-hidden />
+            <span className="ml-1.5">{isDeleting ? "Eliminando…" : "Borrar"}</span>
           </button>
         )}
       </div>
 
       {existing && !dirty && (
-        <p className="mt-2 text-center text-[11px] text-carbon/55">
-          Tu apuesta actual ya está guardada. Cámbiala antes de que empiece el partido.
+        <p className="mt-3 text-center font-headline text-[11px] uppercase tracking-[0.18em] text-ink-muted">
+          Tu apuesta actual ya está guardada. Cámbiala antes del kickoff.
         </p>
       )}
     </form>

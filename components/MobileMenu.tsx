@@ -4,13 +4,24 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  ListChecks,
+  Trophy,
+  Share2,
+  Wrench,
+  User,
+  HelpCircle,
+  LogOut,
+  X,
+  Menu,
+} from "lucide-react";
 import { Avatar } from "./Avatar";
 import { signoutAction } from "@/app/(app)/actions";
 
 type Item = {
   href: string;
   label: string;
-  icon: string;
+  Icon: typeof Trophy;
   badge?: number;
 };
 
@@ -29,17 +40,14 @@ export function MobileMenu({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
 
-  // Portal requiere document — montamos sólo en cliente.
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Cerrar al navegar.
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
-  // Bloquear scroll del body, cerrar con Escape, foco al primer link.
   useEffect(() => {
     if (!open) return;
     const prevOverflow = document.body.style.overflow;
@@ -66,11 +74,11 @@ export function MobileMenu({
   }, [open]);
 
   const items: Item[] = [
-    { href: "/matches", label: "Partidos", icon: "⚽", badge: pendingCount },
-    { href: "/ranking", label: "Ranking", icon: "🏆" },
-    { href: "/diario", label: "Compartir del día", icon: "📲" },
-    ...(isAdmin ? [{ href: "/admin", label: "Panel admin", icon: "🛠️" }] : []),
-    { href: "/perfil", label: "Mi perfil", icon: "👤" },
+    { href: "/matches", label: "Partidos", Icon: ListChecks, badge: pendingCount },
+    { href: "/ranking", label: "Ranking", Icon: Trophy },
+    { href: "/diario", label: "Compartir del día", Icon: Share2 },
+    ...(isAdmin ? [{ href: "/admin", label: "Panel admin", Icon: Wrench }] : []),
+    { href: "/perfil", label: "Mi perfil", Icon: User },
   ];
 
   function openHelp() {
@@ -85,20 +93,19 @@ export function MobileMenu({
       aria-modal="true"
       aria-label="Menú de navegación"
       aria-hidden={!open}
-      className={`fixed inset-0 z-[100] flex flex-col bg-marfil transition-transform duration-300 ease-out ${
+      className={`fixed inset-0 z-[100] flex flex-col bg-stadium bg-stadium-spotlight bg-no-repeat transition-transform duration-300 ease-out ${
         open ? "translate-x-0" : "pointer-events-none translate-x-full"
       }`}
     >
-      {/* Header del drawer */}
-      <div className="flex items-start justify-between gap-3 border-b border-carbon/10 bg-white px-4 py-4">
+      <div className="flex items-start justify-between gap-3 border-b border-white/5 bg-stadium-200/80 px-4 py-4 backdrop-blur-md">
         <div className="flex min-w-0 items-center gap-3">
           <Avatar name={displayName} size="lg" />
           <div className="min-w-0">
-            <p className="truncate font-headline text-xl uppercase tracking-wide text-carbon">
+            <p className="truncate font-display text-2xl uppercase tracking-wide text-ivory">
               {displayName}
             </p>
             {isAdmin && (
-              <span className="mt-0.5 inline-flex rounded-full bg-cancha/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-cancha">
+              <span className="mt-1 inline-flex rounded-pill border border-trophy-200/30 bg-trophy-200/10 px-2 py-0.5 font-headline text-[10px] uppercase tracking-[0.2em] text-trophy-200">
                 Admin
               </span>
             )}
@@ -108,52 +115,42 @@ export function MobileMenu({
           type="button"
           onClick={() => setOpen(false)}
           aria-label="Cerrar menú"
-          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-carbon/70 transition hover:bg-carbon/5 active:bg-carbon/10"
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-ink-muted transition hover:bg-white/5 hover:text-ivory active:bg-white/10"
         >
-          <svg
-            aria-hidden
-            viewBox="0 0 24 24"
-            width="22"
-            height="22"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-          >
-            <path d="M6 6l12 12M18 6L6 18" />
-          </svg>
+          <X size={22} strokeWidth={2.2} aria-hidden />
         </button>
       </div>
 
-      {/* Items principales */}
       <nav className="flex-1 overflow-y-auto px-4 py-4">
         <ul className="space-y-1.5">
-          {items.map((item) => {
-            const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+          {items.map(({ href, label, Icon, badge }) => {
+            const isActive = href === "/" ? pathname === "/" : pathname.startsWith(href);
             return (
-              <li key={item.href}>
+              <li key={href}>
                 <Link
-                  href={item.href}
-                  className={`flex items-center gap-3 rounded-xl px-4 py-4 text-base transition ${
+                  href={href}
+                  className={`flex items-center gap-3 rounded-card px-4 py-4 text-base transition ${
                     isActive
-                      ? "bg-carbon text-white"
-                      : "bg-white text-carbon hover:bg-carbon/5 active:bg-carbon/10"
+                      ? "bg-trophy-200 text-stadium shadow-trophy"
+                      : "bg-white/[0.03] text-ivory hover:bg-white/[0.07]"
                   }`}
                 >
                   <span
-                    className="inline-flex h-8 w-8 shrink-0 items-center justify-center text-2xl"
+                    className={`inline-flex h-8 w-8 shrink-0 items-center justify-center ${
+                      isActive ? "text-stadium" : "text-trophy-200"
+                    }`}
                     aria-hidden
                   >
-                    {item.icon}
+                    <Icon size={20} strokeWidth={2} />
                   </span>
-                  <span className="flex-1 font-semibold">{item.label}</span>
-                  {item.badge !== undefined && item.badge > 0 && (
+                  <span className="flex-1 font-headline uppercase tracking-[0.1em]">{label}</span>
+                  {badge !== undefined && badge > 0 && (
                     <span
-                      className={`inline-flex h-6 min-w-[24px] items-center justify-center rounded-full px-1.5 text-xs font-bold leading-none ${
-                        isActive ? "bg-white text-carbon" : "bg-cancha text-white"
+                      className={`inline-flex h-6 min-w-[24px] items-center justify-center rounded-pill px-1.5 font-display text-xs leading-none ${
+                        isActive ? "bg-stadium text-trophy-200" : "bg-trophy-200 text-stadium"
                       }`}
                     >
-                      {item.badge > 99 ? "99+" : item.badge}
+                      {badge > 99 ? "99+" : badge}
                     </span>
                   )}
                 </Link>
@@ -162,45 +159,49 @@ export function MobileMenu({
           })}
         </ul>
 
-        <div className="my-5 border-t border-carbon/10" />
+        <div className="my-5 border-t border-white/5" />
 
         <ul className="space-y-1.5">
           <li>
             <button
               type="button"
               onClick={openHelp}
-              className="flex w-full items-center gap-3 rounded-xl bg-white px-4 py-4 text-base text-carbon transition hover:bg-carbon/5 active:bg-carbon/10"
+              className="flex w-full items-center gap-3 rounded-card bg-white/[0.03] px-4 py-4 text-base text-ivory transition hover:bg-white/[0.07]"
             >
               <span
-                className="inline-flex h-8 w-8 shrink-0 items-center justify-center text-2xl"
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center text-trophy-200"
                 aria-hidden
               >
-                ❓
+                <HelpCircle size={20} />
               </span>
-              <span className="flex-1 text-left font-semibold">¿Cómo se juega?</span>
+              <span className="flex-1 text-left font-headline uppercase tracking-[0.1em]">
+                ¿Cómo se juega?
+              </span>
             </button>
           </li>
           <li>
             <form action={signoutAction}>
               <button
                 type="submit"
-                className="flex w-full items-center gap-3 rounded-xl bg-white px-4 py-4 text-base text-cancha transition hover:bg-cancha/5 active:bg-cancha/10"
+                className="flex w-full items-center gap-3 rounded-card bg-white/[0.03] px-4 py-4 text-base text-danger-soft transition hover:bg-danger/10"
               >
                 <span
-                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center text-2xl"
+                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center"
                   aria-hidden
                 >
-                  🚪
+                  <LogOut size={20} />
                 </span>
-                <span className="flex-1 text-left font-semibold">Cerrar sesión</span>
+                <span className="flex-1 text-left font-headline uppercase tracking-[0.1em]">
+                  Cerrar sesión
+                </span>
               </button>
             </form>
           </li>
         </ul>
       </nav>
 
-      <footer className="border-t border-carbon/10 bg-white px-4 py-3 text-center text-[11px] text-carbon/60">
-        🕒 Horarios en hora de Colombia · Polla Mundial 2026
+      <footer className="border-t border-white/5 bg-stadium-200/60 px-4 py-3 text-center font-headline text-[10px] uppercase tracking-[0.22em] text-ink-muted">
+        Horarios en hora de Colombia · Polla Familiar 26
       </footer>
     </div>
   );
@@ -216,22 +217,11 @@ export function MobileMenu({
         }
         aria-expanded={open}
         aria-controls="mobile-drawer"
-        className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg text-carbon transition hover:bg-carbon/5 active:bg-carbon/10"
+        className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg text-ivory transition hover:bg-white/5 active:bg-white/10"
       >
-        <svg
-          aria-hidden
-          viewBox="0 0 24 24"
-          width="22"
-          height="22"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-        >
-          <path d="M4 7h16M4 12h16M4 17h16" />
-        </svg>
+        <Menu size={22} strokeWidth={2.2} aria-hidden />
         {pendingCount > 0 && (
-          <span className="absolute right-1 top-1 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-cancha px-1 text-[10px] font-bold leading-none text-white">
+          <span className="absolute right-1 top-1 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-trophy-200 px-1 font-display text-[10px] leading-none text-stadium">
             {pendingCount > 99 ? "99+" : pendingCount}
           </span>
         )}

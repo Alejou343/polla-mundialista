@@ -25,7 +25,6 @@ export default async function DiarioPage() {
   const allMatches = (matchesData ?? []) as Match[];
   const todayMatches = allMatches.filter((m) => tournamentDayKey(m.kickoff_time) === todayKey);
 
-  // Si hoy no hay partidos, buscamos el próximo día con partidos para sugerir.
   const nextDayWithMatches = allMatches.find((m) => tournamentDayKey(m.kickoff_time) > todayKey);
   const nextDayLabel = nextDayWithMatches
     ? capitalize(tournamentDayLong(nextDayWithMatches.kickoff_time))
@@ -39,13 +38,11 @@ export default async function DiarioPage() {
   return (
     <div className="mx-auto max-w-screen-sm space-y-5 px-4 py-6">
       <header>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cesped">
-          Compartir en el grupo
-        </p>
-        <h1 className="mt-1 font-headline text-4xl uppercase tracking-wide text-carbon">
+        <p className="kicker">Compartir en el grupo</p>
+        <h1 className="mt-1 font-display text-4xl uppercase tracking-wide text-trophy-200">
           Resumen del día
         </h1>
-        <p className="mt-1 text-sm text-carbon/60">
+        <p className="mt-1 text-sm text-ink-muted">
           {dayLabel} ·{" "}
           {todayMatches.length === 0
             ? "Hoy no hay partidos"
@@ -56,29 +53,32 @@ export default async function DiarioPage() {
       <ShareButtons message={message} />
 
       <section>
-        <h2 className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-carbon/60">
+        <h2 className="kicker mb-2 flex items-center gap-2">
           <span aria-hidden>👁️</span> Vista previa del mensaje
         </h2>
         <pre
-          className="whitespace-pre-wrap rounded-xl bg-white p-4 font-sans text-[13px] leading-relaxed text-carbon shadow-sm"
+          className="surface-card whitespace-pre-wrap p-4 font-body text-[13px] leading-relaxed text-ivory"
           style={{ wordBreak: "break-word" }}
         >
           {message}
         </pre>
-        <p className="mt-2 text-[11px] text-carbon/50">
+        <p className="mt-2 font-headline text-[10px] uppercase tracking-[0.18em] text-ink-muted">
           Así se verá en WhatsApp. El texto con asteriscos sale en negrita automáticamente.
         </p>
       </section>
 
       {todayMatches.length === 0 && nextDayWithMatches && (
-        <section className="rounded-xl bg-marfil/60 p-4 text-center ring-1 ring-carbon/5">
-          <p className="text-sm text-carbon/70">
-            Próximo día con partidos: <strong className="text-carbon">{nextDayLabel}</strong> a
-            partir de las {nextDayTime}.
+        <section className="surface-card p-4 text-center">
+          <p className="text-sm text-ink-soft">
+            Próximo día con partidos:{" "}
+            <strong className="font-headline uppercase tracking-wide text-trophy-200">
+              {nextDayLabel}
+            </strong>{" "}
+            a partir de las {nextDayTime}.
           </p>
           <Link
             href="/matches"
-            className="mt-2 inline-block text-sm font-semibold text-cesped underline"
+            className="mt-3 inline-block font-headline text-sm uppercase tracking-[0.16em] text-trophy-200 underline-offset-4 hover:underline"
           >
             Ver todos los partidos →
           </Link>

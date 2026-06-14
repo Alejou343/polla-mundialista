@@ -10,7 +10,9 @@ export function LoginForm() {
   return (
     <form action={formAction} className="space-y-4">
       <label className="block">
-        <span className="text-sm font-medium">Nombre</span>
+        <span className="font-headline text-[11px] uppercase tracking-[0.18em] text-ink-muted">
+          Nombre
+        </span>
         <input
           name="displayName"
           required
@@ -20,7 +22,9 @@ export function LoginForm() {
         />
       </label>
       <label className="block">
-        <span className="text-sm font-medium">Contraseña</span>
+        <span className="font-headline text-[11px] uppercase tracking-[0.18em] text-ink-muted">
+          Contraseña
+        </span>
         <input
           type="password"
           name="password"
@@ -30,7 +34,9 @@ export function LoginForm() {
         />
       </label>
       {state && !state.ok && (
-        <p className="rounded-md bg-cancha/10 px-3 py-2 text-sm text-cancha">{state.error}</p>
+        <p className="rounded-card border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger-soft">
+          {state.error}
+        </p>
       )}
       <SubmitButton pendingLabel="Entrando…">Entrar</SubmitButton>
     </form>

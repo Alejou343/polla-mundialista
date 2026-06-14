@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Check, Clipboard, Send, Share2 } from "lucide-react";
 
 export function ShareButtons({ message }: { message: string }) {
   const [copied, setCopied] = useState(false);
@@ -37,7 +38,7 @@ export function ShareButtons({ message }: { message: string }) {
   async function shareNative() {
     try {
       await navigator.share({
-        title: "Polla Familiar Mundial 2026",
+        title: "Polla Familiar 26",
         text: message,
       });
     } catch {
@@ -51,22 +52,22 @@ export function ShareButtons({ message }: { message: string }) {
         href={waUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3.5 text-base font-semibold text-white shadow-sm transition hover:opacity-90 active:opacity-80"
+        className="flex w-full items-center justify-center gap-2 rounded-card bg-[#25D366] px-4 py-3.5 font-headline text-base uppercase tracking-[0.12em] text-white shadow-card transition hover:brightness-110 active:brightness-95"
       >
-        <span aria-hidden className="text-lg">
-          📲
-        </span>
+        <Send size={18} strokeWidth={2.2} aria-hidden />
         Compartir en WhatsApp
       </a>
 
       <button
         type="button"
         onClick={copy}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3.5 text-base font-semibold text-carbon shadow-sm transition hover:bg-carbon/5 active:bg-carbon/10"
+        className="flex w-full items-center justify-center gap-2 rounded-card border border-white/10 bg-white/[0.04] px-4 py-3.5 font-headline text-base uppercase tracking-[0.12em] text-ivory transition hover:bg-white/[0.08]"
       >
-        <span aria-hidden className="text-lg">
-          {copied ? "✓" : "📋"}
-        </span>
+        {copied ? (
+          <Check size={18} strokeWidth={2.4} className="text-success-soft" aria-hidden />
+        ) : (
+          <Clipboard size={18} strokeWidth={2.2} aria-hidden />
+        )}
         {copied ? "¡Copiado!" : "Copiar texto"}
       </button>
 
@@ -74,11 +75,9 @@ export function ShareButtons({ message }: { message: string }) {
         <button
           type="button"
           onClick={shareNative}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3.5 text-base font-semibold text-carbon shadow-sm transition hover:bg-carbon/5 active:bg-carbon/10"
+          className="flex w-full items-center justify-center gap-2 rounded-card border border-white/10 bg-white/[0.04] px-4 py-3.5 font-headline text-base uppercase tracking-[0.12em] text-ivory transition hover:bg-white/[0.08]"
         >
-          <span aria-hidden className="text-lg">
-            📤
-          </span>
+          <Share2 size={18} strokeWidth={2.2} aria-hidden />
           Compartir en otra app
         </button>
       )}

@@ -2,35 +2,23 @@ type Tone = "filled" | "compact";
 
 export function PointsBadge({ value, tone = "filled" }: { value: 0 | 1 | 3; tone?: Tone }) {
   const compact = tone === "compact";
+  const size = compact ? "px-2 py-0 text-[10px]" : "px-2.5 py-0.5 text-xs";
+  const base = `inline-flex items-center gap-1 rounded-pill font-headline uppercase tracking-[0.14em] ${size}`;
   if (value === 3) {
     return (
-      <span
-        className={`inline-flex items-center gap-1 rounded-full bg-trofeo/40 font-semibold text-carbon ${
-          compact ? "px-1.5 py-0 text-[10px]" : "px-2 py-0.5 text-xs"
-        }`}
-      >
+      <span className={`${base} border border-trophy-200/40 bg-trophy-200/20 text-trophy-200`}>
         🏆 +3 exacto
       </span>
     );
   }
   if (value === 1) {
     return (
-      <span
-        className={`inline-flex items-center gap-1 rounded-full bg-cesped/20 font-semibold text-cesped ${
-          compact ? "px-1.5 py-0 text-[10px]" : "px-2 py-0.5 text-xs"
-        }`}
-      >
+      <span className={`${base} border border-success/30 bg-success/15 text-success-soft`}>
         ✓ +1 resultado
       </span>
     );
   }
   return (
-    <span
-      className={`inline-flex items-center rounded-full bg-cancha/10 font-semibold text-cancha ${
-        compact ? "px-1.5 py-0 text-[10px]" : "px-2 py-0.5 text-xs"
-      }`}
-    >
-      +0
-    </span>
+    <span className={`${base} border border-danger/30 bg-danger/10 text-danger-soft`}>+0</span>
   );
 }

@@ -12,37 +12,37 @@ export function RankingTable({
 }) {
   if (entries.length === 0) {
     return (
-      <div className="rounded-xl bg-white px-6 py-10 text-center shadow-sm">
+      <div className="surface-card px-6 py-10 text-center">
         <p className="text-5xl" aria-hidden>
           🏆
         </p>
-        <p className="mt-3 font-headline text-2xl uppercase tracking-wide text-carbon">
+        <p className="mt-3 font-display text-2xl uppercase tracking-wide text-trophy-200">
           El ranking está vacío
         </p>
-        <p className="mt-1 text-sm text-carbon/60">
+        <p className="mt-1 text-sm text-ink-muted">
           Cuando alguien apueste y los partidos terminen, acá verás los puntajes.
         </p>
       </div>
     );
   }
   return (
-    <div className="overflow-hidden rounded-xl bg-white shadow-sm">
+    <div className="overflow-hidden rounded-card border border-white/10 bg-white/[0.03] shadow-card">
       <table className="w-full text-sm">
-        <thead className="bg-carbon text-white">
-          <tr>
-            <th className="px-3 py-2 text-left font-semibold uppercase tracking-wider text-[11px] w-8">
+        <thead>
+          <tr className="bg-stadium-200/80 backdrop-blur-md">
+            <th className="w-8 px-3 py-2.5 text-left font-headline text-[10px] uppercase tracking-[0.18em] text-ink-muted">
               #
             </th>
-            <th className="px-3 py-2 text-left font-semibold uppercase tracking-wider text-[11px]">
+            <th className="px-3 py-2.5 text-left font-headline text-[10px] uppercase tracking-[0.18em] text-ink-muted">
               Familiar
             </th>
-            <th className="px-3 py-2 text-right font-semibold uppercase tracking-wider text-[11px] tabular-nums">
+            <th className="px-3 py-2.5 text-right font-headline text-[10px] uppercase tracking-[0.18em] tabular-nums text-ink-muted">
               Pts
             </th>
-            <th className="px-3 py-2 text-right font-semibold uppercase tracking-wider text-[11px] tabular-nums">
+            <th className="px-3 py-2.5 text-right font-headline text-[10px] uppercase tracking-[0.18em] tabular-nums text-ink-muted">
               🎯
             </th>
-            <th className="px-3 py-2 text-right font-semibold uppercase tracking-wider text-[11px] tabular-nums">
+            <th className="px-3 py-2.5 text-right font-headline text-[10px] uppercase tracking-[0.18em] tabular-nums text-ink-muted">
               ✓
             </th>
           </tr>
@@ -51,29 +51,47 @@ export function RankingTable({
           {entries.map((e, i) => {
             const place = i + 1;
             const isMe = e.user_id === currentUserId;
+            const topRow =
+              place === 1
+                ? "bg-trophy-200/[0.06]"
+                : place === 2
+                  ? "bg-medal-silver/[0.05]"
+                  : place === 3
+                    ? "bg-medal-bronze/[0.05]"
+                    : "";
             return (
               <tr
                 key={e.user_id}
-                className={`border-t border-carbon/5 transition ${isMe ? "bg-trofeo/15" : ""}`}
+                className={`border-t border-white/5 transition ${topRow} ${
+                  isMe ? "ring-1 ring-inset ring-trophy-200/40" : ""
+                }`}
               >
-                <td className="px-3 py-2 text-carbon/60 tabular-nums">{place}</td>
-                <td className="px-3 py-2">
+                <td className="px-3 py-2.5 font-display text-base tabular-nums text-ink-muted">
+                  {place}
+                </td>
+                <td className="px-3 py-2.5">
                   <span className="flex items-center gap-2">
                     <Avatar name={e.display_name} size="sm" />
                     <span className="flex items-center gap-1 truncate">
-                      <span className="truncate font-medium">{e.display_name}</span>
+                      <span className="truncate font-headline uppercase tracking-wide text-ivory">
+                        {e.display_name}
+                      </span>
                       {MEDALS[place] && <span aria-hidden>{MEDALS[place]}</span>}
-                      {isMe && <span className="text-[10px] font-normal text-cesped">(tú)</span>}
+                      {isMe && (
+                        <span className="text-[10px] font-headline uppercase tracking-[0.18em] text-trophy-200">
+                          (tú)
+                        </span>
+                      )}
                     </span>
                   </span>
                 </td>
-                <td className="px-3 py-2 text-right font-headline text-base tabular-nums">
+                <td className="px-3 py-2.5 text-right font-display text-lg tabular-nums text-trophy-200">
                   {e.total_points}
                 </td>
-                <td className="px-3 py-2 text-right text-carbon/70 tabular-nums">
+                <td className="px-3 py-2.5 text-right tabular-nums text-ink-soft">
                   {e.exact_scores}
                 </td>
-                <td className="px-3 py-2 text-right text-carbon/70 tabular-nums">
+                <td className="px-3 py-2.5 text-right tabular-nums text-ink-soft">
                   {e.correct_results}
                 </td>
               </tr>
@@ -81,7 +99,7 @@ export function RankingTable({
           })}
         </tbody>
       </table>
-      <p className="border-t border-carbon/5 bg-marfil/50 px-3 py-2 text-[11px] text-carbon/55">
+      <p className="border-t border-white/5 bg-stadium-200/60 px-3 py-2 font-headline text-[10px] uppercase tracking-[0.18em] text-ink-muted">
         🎯 marcadores exactos · ✓ aciertos · empates sin orden definido
       </p>
     </div>

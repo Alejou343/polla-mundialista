@@ -43,7 +43,6 @@ export default async function MatchesPage({
   const matchList = (matchesData ?? []) as Match[];
   const now = new Date();
 
-  // Particionar por estado
   const live: Match[] = [];
   const upcoming: Match[] = [];
   const finished: Match[] = [];
@@ -54,14 +53,13 @@ export default async function MatchesPage({
     else upcoming.push(m);
   }
 
-  // Filtrar por vista
   const pendingMatches = upcoming.filter((m) => !betByMatch.has(m.id));
   const nextDeadline = pendingMatches[0]?.kickoff_time ?? null;
   const pendingCount = pendingMatches.length;
 
   let visibleLive: Match[] = live;
   let visibleUpcoming: Match[] = upcoming;
-  let visibleFinished: Match[] = [...finished].reverse(); // más recientes arriba
+  let visibleFinished: Match[] = [...finished].reverse();
   let showFinishedAccordion = true;
 
   if (view === "pending") {
@@ -73,10 +71,9 @@ export default async function MatchesPage({
     visibleLive = [];
     visibleUpcoming = [];
     visibleFinished = [...finished].reverse();
-    showFinishedAccordion = false; // mostrar inline, no en accordion
+    showFinishedAccordion = false;
   }
 
-  // Agrupar upcoming por día (TZ Bogotá)
   const upcomingByDay = new Map<string, Match[]>();
   for (const m of visibleUpcoming) {
     const key = tournamentDayKey(m.kickoff_time);
@@ -87,11 +84,14 @@ export default async function MatchesPage({
   const totalVisible = visibleLive.length + visibleUpcoming.length + visibleFinished.length;
 
   return (
-    <div className="mx-auto max-w-screen-sm space-y-4 px-4 py-6">
+    <div className="mx-auto max-w-screen-sm space-y-5 px-4 py-6">
       <header>
-        <h1 className="font-headline text-4xl uppercase tracking-wide text-cesped">Partidos</h1>
-        <p className="text-sm text-carbon/60">
-          Apuesta antes de que empiece el partido. Una vez suena el pitazo, no se puede tocar.
+        <p className="kicker">Centro de predicciones</p>
+        <h1 className="mt-1 font-display text-4xl uppercase tracking-wide text-trophy-200">
+          Partidos
+        </h1>
+        <p className="mt-1 text-sm text-ink-muted">
+          Apuesta antes del pitazo inicial. Una vez arranca, queda en piedra.
         </p>
       </header>
 
@@ -102,14 +102,16 @@ export default async function MatchesPage({
       <StageFilter activeStage={stage} activeView={view} pendingCount={pendingCount} />
 
       {totalVisible === 0 && (
-        <div className="rounded-xl bg-white px-6 py-10 text-center shadow-sm">
+        <div className="surface-card px-6 py-10 text-center">
           {view === "pending" ? (
             <>
               <p className="text-5xl" aria-hidden>
                 ✅
               </p>
-              <p className="mt-3 font-headline text-2xl uppercase tracking-wide">¡Estás al día!</p>
-              <p className="mt-1 text-sm text-carbon/60">
+              <p className="mt-3 font-display text-2xl uppercase tracking-wide text-trophy-200">
+                ¡Estás al día!
+              </p>
+              <p className="mt-1 text-sm text-ink-muted">
                 No te falta ninguna apuesta. Volvé cuando se publiquen más partidos.
               </p>
             </>
@@ -118,10 +120,10 @@ export default async function MatchesPage({
               <p className="text-5xl" aria-hidden>
                 ⚽
               </p>
-              <p className="mt-3 font-headline text-2xl uppercase tracking-wide">
+              <p className="mt-3 font-display text-2xl uppercase tracking-wide text-trophy-200">
                 Aún no hay partidos jugados
               </p>
-              <p className="mt-1 text-sm text-carbon/60">
+              <p className="mt-1 text-sm text-ink-muted">
                 Cuando termine el primero, lo verás aquí.
               </p>
             </>
@@ -130,18 +132,19 @@ export default async function MatchesPage({
               <p className="text-5xl" aria-hidden>
                 📅
               </p>
-              <p className="mt-3 font-headline text-2xl uppercase tracking-wide">Sin partidos</p>
-              <p className="mt-1 text-sm text-carbon/60">Aún no hay partidos para esta etapa.</p>
+              <p className="mt-3 font-display text-2xl uppercase tracking-wide text-trophy-200">
+                Sin partidos
+              </p>
+              <p className="mt-1 text-sm text-ink-muted">Aún no hay partidos para esta etapa.</p>
             </>
           )}
         </div>
       )}
 
-      {/* 🔴 EN VIVO */}
       {visibleLive.length > 0 && (
         <section>
-          <h2 className="mb-2 flex items-center gap-2 font-headline text-xl uppercase tracking-wide text-cancha">
-            <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-cancha" />
+          <h2 className="mb-2 flex items-center gap-2 font-display text-2xl uppercase tracking-wide text-info-soft">
+            <span className="live-dot" aria-hidden />
             En vivo ahora
           </h2>
           <div className="space-y-2">
@@ -152,7 +155,6 @@ export default async function MatchesPage({
         </section>
       )}
 
-      {/* 📅 PRÓXIMOS */}
       {visibleUpcoming.length > 0 &&
         Array.from(upcomingByDay.entries()).map(([day, ms]) => (
           <section key={day}>
@@ -165,19 +167,18 @@ export default async function MatchesPage({
           </section>
         ))}
 
-      {/* ✅ YA JUGADOS */}
       {showFinishedAccordion && visibleFinished.length > 0 && (
-        <details className="group rounded-xl bg-white p-4 shadow-sm open:bg-white">
-          <summary className="flex cursor-pointer list-none items-center justify-between font-headline text-base uppercase tracking-wide text-carbon">
+        <details className="group surface-card overflow-hidden p-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between font-display text-lg uppercase tracking-wide text-ivory">
             <span className="flex items-center gap-2">
               ✅ Ya jugados
-              <span className="rounded-full bg-carbon/10 px-2 py-0.5 text-[11px] font-semibold text-carbon">
+              <span className="rounded-pill border border-white/10 bg-white/5 px-2 py-0.5 font-headline text-[11px] uppercase tracking-[0.14em] text-ink-soft">
                 {visibleFinished.length}
               </span>
             </span>
-            <span className="text-xs text-carbon/50 transition group-open:rotate-180">▾</span>
+            <span className="text-ink-muted transition group-open:rotate-180">▾</span>
           </summary>
-          <div className="mt-3 space-y-2">
+          <div className="mt-4 space-y-2">
             {visibleFinished.map((m) => (
               <MatchCard key={m.id} match={m} bet={betByMatch.get(m.id)} />
             ))}
@@ -185,7 +186,6 @@ export default async function MatchesPage({
         </details>
       )}
 
-      {/* Vista "played" muestra inline */}
       {!showFinishedAccordion && view === "played" && visibleFinished.length > 0 && (
         <section className="space-y-2">
           {visibleFinished.map((m) => (

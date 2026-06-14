@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Bebas_Neue } from "next/font/google";
+import { Inter, Bebas_Neue, Oswald } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "900"],
   variable: "--font-inter",
   display: "swap",
 });
@@ -13,23 +14,32 @@ const bebas = Bebas_Neue({
   subsets: ["latin"],
   variable: "--font-bebas",
   display: "swap",
+  preload: true,
+});
+
+const oswald = Oswald({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-oswald",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Polla Familiar Mundial 2026",
-  description: "Predice los marcadores del Mundial 2026 con tu familia.",
+  title: "Polla Familiar 26",
+  description:
+    "Predice los marcadores del Mundial con tu familia. Arma tus marcadores, suma puntos y pelea la tabla.",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0E7C3A",
+  themeColor: "#0d1117",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${inter.variable} ${bebas.variable}`}>
-      <body className="min-h-screen bg-marfil font-body text-carbon antialiased">{children}</body>
+    <html lang="es" className={`${inter.variable} ${bebas.variable} ${oswald.variable}`}>
+      <body className="min-h-dvh bg-stadium font-body text-ivory antialiased">{children}</body>
     </html>
   );
 }

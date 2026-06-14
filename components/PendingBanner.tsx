@@ -1,10 +1,6 @@
 import Link from "next/link";
 import { Countdown } from "./Countdown";
 
-/**
- * Banner sticky que muestra apuestas pendientes y cuándo cierra la próxima.
- * Solo se renderiza si pendingCount > 0.
- */
 export function PendingBanner({
   pendingCount,
   nextDeadlineIso,
@@ -15,34 +11,37 @@ export function PendingBanner({
   if (pendingCount === 0) return null;
 
   return (
-    <div className="rounded-xl border-2 border-cancha/30 bg-cancha/5 p-3 shadow-sm">
-      <div className="flex items-start gap-3">
-        <span className="mt-0.5 text-xl" aria-hidden>
+    <div className="relative overflow-hidden rounded-card border border-trophy-200/30 bg-gradient-to-br from-trophy-200/10 via-stadium to-stadium p-4 shadow-trophy">
+      <span aria-hidden className="absolute right-0 top-0 h-32 w-32 bg-trophy-halo" />
+      <div className="relative flex items-start gap-3">
+        <span className="mt-0.5 text-2xl" aria-hidden>
           ⚡
         </span>
         <div className="flex-1 text-sm">
-          <p className="font-semibold text-carbon">
+          <p className="font-headline uppercase tracking-[0.1em] text-ivory">
             Te {pendingCount === 1 ? "falta" : "faltan"}{" "}
-            <strong className="text-cancha tabular-nums">{pendingCount}</strong>{" "}
+            <strong className="font-display text-xl tabular-nums text-trophy-200">
+              {pendingCount}
+            </strong>{" "}
             {pendingCount === 1 ? "apuesta" : "apuestas"} por hacer
           </p>
           {nextDeadlineIso && (
-            <p className="mt-0.5 text-xs text-carbon/70">
+            <p className="mt-1 text-xs text-ink-soft">
               La próxima{" "}
               <Countdown
                 isoTarget={nextDeadlineIso}
                 prefix="cierra en "
                 expiredText="acaba de cerrar"
-                className="font-semibold text-cancha"
+                className="font-headline uppercase tracking-wide text-warning-soft"
               />
             </p>
           )}
         </div>
         <Link
           href="/matches?view=pending"
-          className="self-center whitespace-nowrap rounded-md bg-cancha px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-90"
+          className="self-center whitespace-nowrap rounded-pill bg-trophy-200 px-3 py-1.5 font-headline text-xs uppercase tracking-[0.14em] text-stadium shadow-trophy transition hover:bg-trophy-300"
         >
-          Ver pendientes
+          Ver
         </Link>
       </div>
     </div>

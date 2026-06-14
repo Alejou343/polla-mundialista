@@ -26,8 +26,10 @@ export default async function AdminPage() {
         <span className="text-5xl" aria-hidden>
           🔒
         </span>
-        <h1 className="mt-3 font-headline text-3xl uppercase tracking-wider">Acceso denegado</h1>
-        <p className="mt-2 max-w-xs text-sm text-carbon/60">
+        <h1 className="mt-3 font-display text-3xl uppercase tracking-wide text-trophy-200">
+          Acceso denegado
+        </h1>
+        <p className="mt-2 max-w-xs text-sm text-ink-muted">
           Solo quien organiza la polla puede ver esta sección. Pide acceso si crees que es un error.
         </p>
         <Link href="/matches" className="btn-primary mt-6">
@@ -48,22 +50,20 @@ export default async function AdminPage() {
   return (
     <div className="mx-auto max-w-screen-sm space-y-6 px-4 py-6">
       <header>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cancha">
-          Zona admin
-        </p>
-        <h1 className="mt-1 font-headline text-4xl uppercase tracking-wide">Panel de control</h1>
+        <p className="kicker text-warning-soft">Zona admin</p>
+        <h1 className="mt-1 font-display text-4xl uppercase tracking-wide text-trophy-200">
+          Panel de control
+        </h1>
       </header>
 
-      <section className="rounded-xl bg-white p-4 shadow-sm">
-        <h2 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-carbon/60">
-          Código familiar
-        </h2>
-        <p className="mt-1 text-xs text-carbon/60">
+      <section className="surface-card p-5">
+        <h2 className="kicker">Código familiar</h2>
+        <p className="mt-1 text-xs text-ink-muted">
           Compártelo con quien quiera unirse a la polla. No lo postees en redes — esto es solo para
           la familia.
         </p>
-        <div className="mt-3 flex items-center gap-2 rounded-md bg-marfil p-2">
-          <code className="flex-1 truncate font-mono text-base tracking-[0.18em] text-carbon">
+        <div className="mt-3 flex items-center gap-2 rounded-card border border-white/10 bg-stadium-200/60 p-2">
+          <code className="flex-1 truncate font-mono text-base tracking-[0.18em] text-trophy-200">
             {inviteCode}
           </code>
           <CopyButton value={inviteCode} />
@@ -72,26 +72,28 @@ export default async function AdminPage() {
 
       <section>
         <div className="mb-3 flex items-end justify-between gap-2">
-          <h2 className="font-headline text-xl uppercase tracking-wider">Editar resultados</h2>
-          <span className="text-[11px] text-carbon/55">
+          <h2 className="font-display text-2xl uppercase tracking-wide text-trophy-200">
+            Editar resultados
+          </h2>
+          <span className="font-headline text-[11px] uppercase tracking-[0.14em] text-ink-muted">
             {matchList.length} {matchList.length === 1 ? "partido" : "partidos"}
           </span>
         </div>
-        <p className="mb-3 text-xs text-carbon/60">
+        <p className="mb-3 text-xs text-ink-muted">
           Útil si el sync automático falla. Al guardar se recalculan los puntos de todas las
           apuestas del partido.
         </p>
         {matchList.length ? (
           <AdminMatchList matches={matchList} />
         ) : (
-          <div className="rounded-xl bg-white px-6 py-10 text-center shadow-sm">
+          <div className="surface-card px-6 py-10 text-center">
             <p className="text-5xl" aria-hidden>
               📋
             </p>
-            <p className="mt-3 font-headline text-2xl uppercase tracking-wide text-carbon">
+            <p className="mt-3 font-display text-2xl uppercase tracking-wide text-trophy-200">
               Sin partidos cargados
             </p>
-            <p className="mt-1 text-sm text-carbon/60">
+            <p className="mt-1 text-sm text-ink-muted">
               Usá el cron de sincronización o cargá un partido manualmente para empezar.
             </p>
           </div>

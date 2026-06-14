@@ -16,17 +16,19 @@ export default async function RankingPage() {
 
   const entries = (data ?? []) as LeaderboardEntry[];
 
-  // Cuántos partidos ya están terminados (para el subtítulo).
   const { count: finishedCount } = await supabase
     .from("matches")
     .select("id", { count: "exact", head: true })
     .eq("status", "finished");
 
   return (
-    <div className="mx-auto max-w-screen-sm px-4 py-6 space-y-5">
+    <div className="mx-auto max-w-screen-sm space-y-5 px-4 py-6">
       <header>
-        <h1 className="font-headline text-4xl uppercase tracking-wide">Ranking</h1>
-        <p className="text-sm text-carbon/60">
+        <p className="kicker">Sala de control</p>
+        <h1 className="mt-1 font-display text-4xl uppercase tracking-wide text-trophy-200">
+          Ranking
+        </h1>
+        <p className="mt-1 text-sm text-ink-muted">
           La gloria familiar tras {finishedCount ?? 0} de 104 partidos.
         </p>
       </header>
@@ -34,7 +36,7 @@ export default async function RankingPage() {
       {entries.length >= 3 ? (
         <Podium top={entries.slice(0, 3)} />
       ) : entries.length > 0 ? (
-        <p className="rounded-xl bg-marfil/60 p-4 text-center text-sm text-carbon/60 ring-1 ring-carbon/5">
+        <p className="rounded-card border border-white/10 bg-white/[0.03] p-4 text-center text-sm text-ink-muted">
           🥇 El podio aparece cuando hay al menos 3 familiares jugando.
         </p>
       ) : null}

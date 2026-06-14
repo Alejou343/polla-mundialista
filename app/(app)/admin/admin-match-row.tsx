@@ -39,17 +39,17 @@ export function AdminMatchRow({ match }: { match: Match }) {
   }
 
   return (
-    <div className="rounded-xl bg-white p-3 shadow-sm">
-      <div className="flex items-center justify-between gap-2 text-[10px] font-semibold uppercase tracking-wider text-carbon/55">
+    <div className="surface-card p-3">
+      <div className="flex items-center justify-between gap-2 font-headline text-[10px] uppercase tracking-[0.18em] text-ink-muted">
         <span className="truncate">{stageLabel(match.stage, match.group_name)}</span>
-        <span className="whitespace-nowrap text-carbon/55">
+        <span className="whitespace-nowrap">
           {timeShort(match.kickoff_time)} · {dayShort(match.kickoff_time)}
         </span>
       </div>
 
-      <div className="mt-2 grid grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-2">
+      <div className="mt-2.5 grid grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-2">
         <span className="flex items-center justify-end gap-1.5">
-          <span className="block min-w-0 truncate text-right text-[11px] text-carbon/80">
+          <span className="block min-w-0 truncate text-right font-headline text-[11px] uppercase tracking-wide text-ivory">
             {teamDisplay(match.home_team)}
           </span>
           <Flag team={match.home_team} size="sm" />
@@ -60,43 +60,45 @@ export function AdminMatchRow({ match }: { match: Match }) {
           max={30}
           value={home}
           onChange={(e) => setHome(e.target.value)}
-          className="w-full rounded-md border border-carbon/15 bg-marfil px-2 py-1.5 text-center font-headline text-2xl tabular-nums focus:border-cesped focus:outline-none focus:ring-2 focus:ring-cesped/30"
+          className="w-full rounded-md border border-white/10 bg-white/[0.04] px-2 py-1.5 text-center font-display text-2xl tabular-nums text-trophy-200 focus:border-trophy-200 focus:outline-none focus:ring-2 focus:ring-trophy-200/30"
           inputMode="numeric"
           aria-label={`Marcador ${teamDisplay(match.home_team)}`}
         />
-        <span className="text-carbon/40">–</span>
+        <span className="text-ink-muted/40">–</span>
         <input
           type="number"
           min={0}
           max={30}
           value={away}
           onChange={(e) => setAway(e.target.value)}
-          className="w-full rounded-md border border-carbon/15 bg-marfil px-2 py-1.5 text-center font-headline text-2xl tabular-nums focus:border-cesped focus:outline-none focus:ring-2 focus:ring-cesped/30"
+          className="w-full rounded-md border border-white/10 bg-white/[0.04] px-2 py-1.5 text-center font-display text-2xl tabular-nums text-trophy-200 focus:border-trophy-200 focus:outline-none focus:ring-2 focus:ring-trophy-200/30"
           inputMode="numeric"
           aria-label={`Marcador ${teamDisplay(match.away_team)}`}
         />
         <span className="flex items-center gap-1.5">
           <Flag team={match.away_team} size="sm" />
-          <span className="block min-w-0 truncate text-[11px] text-carbon/80">
+          <span className="block min-w-0 truncate font-headline text-[11px] uppercase tracking-wide text-ivory">
             {teamDisplay(match.away_team)}
           </span>
         </span>
       </div>
 
-      <div className="mt-2 flex items-center justify-between gap-2">
+      <div className="mt-3 flex items-center justify-between gap-2">
         {msg ? (
-          <span className={`truncate text-[11px] ${msg.ok ? "text-cesped" : "text-cancha"}`}>
+          <span
+            className={`truncate text-[11px] ${msg.ok ? "text-success-soft" : "text-danger-soft"}`}
+          >
             {msg.ok ? "✓" : "✗"} {msg.text}
           </span>
         ) : (
-          <span className="text-[11px] text-carbon/55">
+          <span className="text-[11px] text-ink-muted">
             {match.status === "finished" ? "Resultado guardado" : "Sin resultado"}
           </span>
         )}
         <button
           onClick={save}
           disabled={pending}
-          className="rounded-md bg-carbon px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+          className="rounded-pill border border-trophy-200/40 bg-trophy-200/10 px-3 py-1.5 font-headline text-[11px] uppercase tracking-[0.14em] text-trophy-200 transition hover:bg-trophy-200/20 disabled:opacity-60"
         >
           {pending ? "Guardando…" : "Guardar y recalcular"}
         </button>

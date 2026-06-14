@@ -19,20 +19,20 @@ export function BetsList({
 }) {
   if (!bets.length) {
     return (
-      <div className="rounded-xl bg-white px-6 py-8 text-center shadow-sm">
+      <div className="surface-card px-6 py-10 text-center">
         <p className="text-5xl" aria-hidden>
           😶
         </p>
-        <p className="mt-3 font-headline text-xl uppercase tracking-wide text-carbon">
+        <p className="mt-3 font-display text-2xl uppercase tracking-wide text-trophy-200">
           Nadie apostó este partido
         </p>
-        <p className="mt-1 text-sm text-carbon/60">La familia se quedó sin apostar. ¡La próxima!</p>
+        <p className="mt-1 text-sm text-ink-muted">La familia se quedó sin apostar. ¡La próxima!</p>
       </div>
     );
   }
   return (
-    <ul className="divide-y divide-carbon/5 overflow-hidden rounded-xl bg-white shadow-sm">
-      {bets.map((b) => {
+    <ul className="overflow-hidden rounded-card border border-white/10 bg-white/[0.03] shadow-card">
+      {bets.map((b, i) => {
         const isMine = b.user_id === currentUserId;
         const name = b.profiles?.display_name ?? "Familiar";
         const hasResult = realHome !== null && realAway !== null && b.points_earned !== null;
@@ -45,25 +45,29 @@ export function BetsList({
         return (
           <li
             key={b.id}
-            className={`flex items-center justify-between gap-2 px-3 py-2 text-sm ${
-              isMine ? "bg-trofeo/10" : ""
-            }`}
+            className={`flex items-center justify-between gap-2 px-3 py-2.5 text-sm transition ${
+              i > 0 ? "border-t border-white/5" : ""
+            } ${isMine ? "bg-trophy-200/10" : ""}`}
           >
             <span className="flex min-w-0 items-center gap-2">
               <Avatar name={name} size="sm" />
-              <span className="truncate font-medium">
+              <span className="truncate font-headline uppercase tracking-wide text-ivory">
                 {name}
-                {isMine && <span className="ml-1 text-[10px] font-normal text-cesped">(tú)</span>}
+                {isMine && (
+                  <span className="ml-1 font-body text-[10px] uppercase tracking-[0.18em] text-trophy-200">
+                    (tú)
+                  </span>
+                )}
               </span>
             </span>
             <span className="flex items-center gap-2 whitespace-nowrap">
-              <span className="font-headline text-lg tabular-nums">
+              <span className="font-display text-lg tabular-nums text-ivory">
                 {b.predicted_home_score}-{b.predicted_away_score}
               </span>
               {hasResult ? (
                 <PointsBadge value={b.points_earned as 0 | 1 | 3} tone="compact" />
               ) : exactPending ? (
-                <span className="rounded-full bg-trofeo/40 px-1.5 py-0 text-[10px] font-semibold text-carbon">
+                <span className="rounded-pill border border-trophy-200/40 bg-trophy-200/20 px-1.5 py-0 text-[10px] font-semibold text-trophy-200">
                   🏆
                 </span>
               ) : null}

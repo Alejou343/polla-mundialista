@@ -1,8 +1,9 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { MobileMenu } from "@/components/MobileMenu";
 import { HowToPlayModal } from "@/components/HowToPlayModal";
+import { Emblem } from "@/components/Emblem";
+import { BottomNav } from "@/components/BottomNav";
 
 export const dynamic = "force-dynamic";
 
@@ -32,16 +33,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const displayName = profile?.display_name ?? "Familiar";
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-20 border-b border-carbon/10 bg-marfil/95 backdrop-blur">
+    <div className="relative flex min-h-dvh flex-col bg-stadium bg-stadium-spotlight bg-no-repeat">
+      <header className="sticky top-0 z-20 border-b border-white/5 bg-stadium/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-screen-sm items-center justify-between px-4 py-3">
-          <Link
-            href="/matches"
-            className="flex items-center gap-1.5 font-headline text-2xl tracking-wide text-cesped"
-          >
-            <span aria-hidden>⚽</span>
-            <span>POLLA 2026</span>
-          </Link>
+          <Emblem href="/matches" size="md" />
           <MobileMenu
             displayName={displayName}
             isAdmin={!!profile?.is_admin}
@@ -49,11 +44,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           />
         </div>
       </header>
-      <main className="flex-1">{children}</main>
-      <footer className="border-t border-carbon/10 py-4 text-center text-xs text-carbon/50">
-        Polla Familiar Mundial 2026 · 🕒 Horarios en hora de Colombia.
+
+      <main className="flex-1 pb-24 md:pb-8">{children}</main>
+
+      <footer className="hidden border-t border-white/5 py-4 text-center text-[11px] uppercase tracking-[0.2em] text-ink-muted md:block">
+        Polla Familiar 26 · Horarios en hora de Colombia
       </footer>
-      {/* Modal global: se abre con evento polla:open-howto desde el menú o auto al primer visit */}
+
+      <BottomNav pendingCount={pendingCount} />
+
       <HowToPlayModal />
     </div>
   );
