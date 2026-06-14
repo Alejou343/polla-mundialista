@@ -29,7 +29,7 @@ function HeaderBadge({ match }: { match: Match }) {
     return (
       <span className={`${base} border border-info/30 bg-info/15 text-info-soft shadow-live`}>
         <span className="live-dot" aria-hidden />
-        En vivo · {min}'
+        En vivo · {min}&apos;
       </span>
     );
   }
