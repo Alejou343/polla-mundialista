@@ -4,6 +4,7 @@ import { useFormState, useFormStatus } from "react-dom";
 import { useState, useTransition } from "react";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { placeBetAction, deleteBetAction } from "./actions";
+import Loader from "@/components/Loader";
 import type { Bet } from "@/lib/types";
 
 const MIN = 0;
@@ -29,9 +30,12 @@ function clamp(n: number): number {
 function SubmitBet({ existing }: { existing: Bet | null }) {
   const { pending } = useFormStatus();
   return (
-    <button type="submit" disabled={pending} className="btn-primary flex-1">
-      {pending ? "Guardando…" : existing ? "Actualizar apuesta" : "Guardar apuesta"}
-    </button>
+    <>
+      <button type="submit" disabled={pending} className="btn-primary flex-1" aria-busy={pending}>
+        {existing ? "Actualizar apuesta" : "Guardar apuesta"}
+      </button>
+      {pending && <Loader fullscreen size="lg" label="Guardando apuesta" />}
+    </>
   );
 }
 
@@ -168,11 +172,13 @@ export function BetForm({
             disabled={isDeleting}
             className="btn-danger"
             aria-label="Eliminar apuesta"
+            aria-busy={isDeleting}
           >
             <Trash2 size={16} strokeWidth={2.2} aria-hidden />
-            <span className="ml-1.5">{isDeleting ? "Eliminando…" : "Borrar"}</span>
+            <span className="ml-1.5">Borrar</span>
           </button>
         )}
+        {isDeleting && <Loader fullscreen size="lg" label="Eliminando apuesta" />}
       </div>
 
       {existing && !dirty && (

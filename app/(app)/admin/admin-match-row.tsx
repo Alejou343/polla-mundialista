@@ -5,6 +5,7 @@ import type { Match } from "@/lib/types";
 import { teamDisplay } from "@/lib/teams";
 import { stageLabel, timeShort, dayShort } from "@/lib/format";
 import { Flag } from "@/components/Flag";
+import Loader from "@/components/Loader";
 
 export function AdminMatchRow({ match }: { match: Match }) {
   const [home, setHome] = useState<string>(match.home_score?.toString() ?? "");
@@ -98,10 +99,12 @@ export function AdminMatchRow({ match }: { match: Match }) {
         <button
           onClick={save}
           disabled={pending}
-          className="rounded-pill border border-trophy-200/40 bg-trophy-200/10 px-3 py-1.5 font-headline text-[11px] uppercase tracking-[0.14em] text-trophy-200 transition hover:bg-trophy-200/20 disabled:opacity-60"
+          aria-busy={pending}
+          className="inline-flex items-center gap-1.5 rounded-pill border border-trophy-200/40 bg-trophy-200/10 px-3 py-1.5 font-headline text-[11px] uppercase tracking-[0.14em] text-trophy-200 transition hover:bg-trophy-200/20 disabled:opacity-60"
         >
-          {pending ? "Guardando…" : "Guardar y recalcular"}
+          Guardar y recalcular
         </button>
+        {pending && <Loader fullscreen size="lg" label="Guardando resultado" />}
       </div>
     </div>
   );

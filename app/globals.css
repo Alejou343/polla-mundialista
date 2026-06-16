@@ -131,6 +131,95 @@
   }
 }
 
+/* === <Loader /> — Órbita Trofeo === */
+.loader-orbit {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  transform: translateZ(0);
+}
+.loader-orbit--a {
+  animation: loader-orbit-spin 1.8s linear infinite;
+}
+.loader-orbit--b {
+  animation: loader-orbit-spin-tilted 2.4s linear infinite reverse;
+}
+
+.loader-sat {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--satellite);
+  height: var(--satellite);
+  margin-left: calc(var(--satellite) * -0.5);
+  margin-top: calc(var(--satellite) * -0.5);
+  border-radius: 9999px;
+  background: var(--trophy, #fde047);
+  will-change: transform, opacity, filter;
+  box-shadow:
+    0 0 6px rgba(253, 224, 71, 0.9),
+    0 0 14px rgba(253, 224, 71, 0.55),
+    0 0 28px rgba(253, 224, 71, 0.25);
+}
+.loader-sat--a {
+  transform: translate3d(var(--orbit-r), 0, 0);
+  animation: loader-sat-pulse 1.8s ease-in-out infinite;
+}
+.loader-sat--b {
+  transform: translate3d(calc(var(--orbit-r) * -1), 0, 0);
+  animation: loader-sat-pulse 2.4s ease-in-out infinite;
+  animation-delay: -0.6s;
+  filter: blur(0.3px);
+}
+
+.loader-core {
+  will-change: filter;
+  animation: loader-core-breathe 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(253, 224, 71, 0.25));
+}
+.loader-logo {
+  pointer-events: none;
+}
+
+@keyframes loader-orbit-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loader-orbit-spin-tilted {
+  from {
+    transform: rotate(0deg) rotateX(58deg);
+  }
+  to {
+    transform: rotate(-360deg) rotateX(58deg);
+  }
+}
+@keyframes loader-sat-pulse {
+  0%,
+  100% {
+    opacity: 0.95;
+    filter: blur(0px);
+  }
+  50% {
+    opacity: 0.65;
+    filter: blur(1.2px);
+  }
+}
+@keyframes loader-core-breathe {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 4px rgba(253, 224, 71, 0.2));
+  }
+  50% {
+    filter: drop-shadow(0 0 10px rgba(253, 224, 71, 0.45));
+  }
+}
+
 /* Respeta usuarios con prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -143,5 +232,21 @@
   }
   .live-dot::after {
     display: none;
+  }
+  .loader-orbit--a,
+  .loader-orbit--b,
+  .loader-sat,
+  .loader-sat--a,
+  .loader-sat--b,
+  .loader-core {
+    animation: none !important;
+  }
+  .loader-sat,
+  .loader-sat--a,
+  .loader-sat--b {
+    opacity: 0.7;
+  }
+  .loader-core {
+    filter: drop-shadow(0 0 6px rgba(253, 224, 71, 0.3));
   }
 }
