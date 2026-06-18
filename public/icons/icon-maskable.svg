@@ -1,41 +1,49 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Polla Familiar 26">
   <defs>
-    <radialGradient id="bg" cx="50%" cy="0%" r="100%">
+    <radialGradient id="bg" cx="50%" cy="20%" r="80%">
       <stop offset="0%" stop-color="#1a2230"/>
       <stop offset="55%" stop-color="#0d1117"/>
       <stop offset="100%" stop-color="#06110b"/>
     </radialGradient>
-    <radialGradient id="halo" cx="50%" cy="20%" r="55%">
-      <stop offset="0%" stop-color="#facc15" stop-opacity="0.32"/>
-      <stop offset="100%" stop-color="#facc15" stop-opacity="0"/>
+    <radialGradient id="accent-halo" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.45"/>
+      <stop offset="60%" stop-color="#38bdf8" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="ball" cx="35%" cy="30%" r="75%">
-      <stop offset="0%" stop-color="#fef9c3"/>
-      <stop offset="55%" stop-color="#fde047"/>
-      <stop offset="100%" stop-color="#d97706"/>
+    <radialGradient id="ball-shade" cx="38%" cy="32%" r="78%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="65%" stop-color="#f1f5f9"/>
+      <stop offset="100%" stop-color="#c4cad3"/>
     </radialGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="50%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
   </defs>
 
   <rect width="512" height="512" fill="url(#bg)"/>
-  <rect width="512" height="512" fill="url(#halo)"/>
+  <circle cx="256" cy="256" r="170" fill="url(#accent-halo)"/>
 
-  <!-- Safe zone: contenido principal dentro del 80% central (51..461) -->
+  <!-- Safe zone: contenido principal dentro del 80% central (~51..461) -->
+  <circle cx="256" cy="256" r="148" fill="none" stroke="url(#ring)" stroke-width="8"/>
+  <circle cx="256" cy="256" r="148" fill="none" stroke="#38bdf8" stroke-width="1" opacity="0.5"/>
+
   <g transform="translate(256 256)">
-    <circle r="118" fill="url(#ball)" stroke="#0d1117" stroke-width="5"/>
+    <circle r="128" fill="url(#ball-shade)" stroke="#0d1117" stroke-width="3.5"/>
 
     <g fill="#0d1117">
-      <polygon points="0,-46 44,-14 27,38 -27,38 -44,-14"/>
-      <polygon points="0,-46 -44,-14 -75,-46 -54,-97 -6,-102"/>
-      <polygon points="0,-46 44,-14 75,-46 54,-97 6,-102"/>
-      <polygon points="-27,38 -62,78 -104,57 -96,3 -44,-14"/>
-      <polygon points="27,38 62,78 104,57 96,3 44,-14"/>
-      <polygon points="-27,38 0,94 27,38 29,72 -29,72"/>
+      <polygon points="0,-46 44,-14 27,42 -27,42 -44,-14"/>
+      <polygon points="-44,-14 -72,-58 -27,-103 18,-103 44,-14 0,-46"/>
+      <polygon points="44,-14 99,-37 115,24 72,58 27,42"/>
+      <polygon points="27,42 72,58 62,112 11,120 -8,104"/>
+      <polygon points="-27,42 -8,104 -62,112 -88,64 -44,-14 -27,42"/>
+      <polygon points="-44,-14 -88,64 -115,24 -99,-37 -72,-58"/>
     </g>
 
-    <ellipse cx="-35" cy="-46" rx="30" ry="16" fill="#ffffff" opacity="0.28"/>
-  </g>
+    <ellipse cx="-46" cy="-58" rx="42" ry="21" fill="#ffffff" opacity="0.35"/>
+    <ellipse cx="50" cy="78" rx="18" ry="8" fill="#ffffff" opacity="0.18"/>
 
-  <g transform="translate(256 410)" text-anchor="middle" font-family="Impact, 'Bebas Neue', Arial Narrow, sans-serif" fill="#fde047" font-weight="900">
-    <text font-size="50" letter-spacing="3">PF26</text>
+    <circle r="126" fill="none" stroke="#0d1117" stroke-width="2" opacity="0.25"/>
   </g>
 </svg>

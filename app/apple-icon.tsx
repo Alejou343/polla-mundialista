@@ -13,51 +13,30 @@ export default function AppleIcon() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "radial-gradient(circle at 50% 0%, #1a2230 0%, #0d1117 55%, #06110b 100%)",
+        background: "radial-gradient(circle at 50% 20%, #1a2230 0%, #0d1117 55%, #06110b 100%)",
       }}
     >
       <div
         style={{
+          width: 140,
+          height: 140,
+          borderRadius: "9999px",
+          background: "radial-gradient(circle at 38% 32%, #ffffff 0%, #f1f5f9 65%, #c4cad3 100%)",
+          border: "5px solid #38bdf8",
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          gap: 6,
+          boxShadow: "0 0 32px 4px rgba(56,189,248,0.45), inset 0 0 0 2px rgba(13,17,23,0.35)",
         }}
       >
         <div
           style={{
-            width: 96,
-            height: 96,
-            borderRadius: "9999px",
-            background: "radial-gradient(circle at 35% 30%, #fef9c3 0%, #fde047 55%, #d97706 100%)",
-            border: "3px solid #0d1117",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 0 30px 0 rgba(250,204,21,0.45)",
+            width: 48,
+            height: 48,
+            background: "#0d1117",
+            clipPath: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
           }}
-        >
-          <div
-            style={{
-              width: 28,
-              height: 28,
-              background: "#0d1117",
-              clipPath: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
-            }}
-          />
-        </div>
-        <div
-          style={{
-            color: "#fde047",
-            fontSize: 28,
-            fontWeight: 900,
-            letterSpacing: 3,
-            fontFamily: "Impact, sans-serif",
-          }}
-        >
-          PF26
-        </div>
+        />
       </div>
     </div>,
     { ...size },

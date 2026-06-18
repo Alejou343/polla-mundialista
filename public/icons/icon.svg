@@ -1,62 +1,65 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Polla Familiar 26">
   <defs>
-    <radialGradient id="bg" cx="50%" cy="0%" r="100%">
+    <radialGradient id="bg" cx="50%" cy="20%" r="80%">
       <stop offset="0%" stop-color="#1a2230"/>
       <stop offset="55%" stop-color="#0d1117"/>
       <stop offset="100%" stop-color="#06110b"/>
     </radialGradient>
-    <radialGradient id="halo" cx="50%" cy="0%" r="60%">
-      <stop offset="0%" stop-color="#facc15" stop-opacity="0.35"/>
-      <stop offset="100%" stop-color="#facc15" stop-opacity="0"/>
+    <radialGradient id="accent-halo" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.45"/>
+      <stop offset="60%" stop-color="#38bdf8" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="ball" cx="35%" cy="30%" r="75%">
-      <stop offset="0%" stop-color="#fef9c3"/>
-      <stop offset="55%" stop-color="#fde047"/>
-      <stop offset="100%" stop-color="#d97706"/>
+    <radialGradient id="ball-shade" cx="38%" cy="32%" r="78%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="65%" stop-color="#f1f5f9"/>
+      <stop offset="100%" stop-color="#c4cad3"/>
     </radialGradient>
-    <linearGradient id="stripe-a" x1="0" x2="0" y1="0" y2="1">
-      <stop offset="0%" stop-color="#015816"/>
-      <stop offset="100%" stop-color="#06110b"/>
-    </linearGradient>
-    <linearGradient id="stripe-b" x1="0" x2="0" y1="0" y2="1">
-      <stop offset="0%" stop-color="#014611"/>
-      <stop offset="100%" stop-color="#06110b"/>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="50%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
     </linearGradient>
   </defs>
 
+  <!-- Stadium dark backdrop -->
   <rect width="512" height="512" fill="url(#bg)"/>
-  <rect width="512" height="512" fill="url(#halo)"/>
 
-  <g opacity="0.55">
-    <rect x="0"   y="412" width="64" height="100" fill="url(#stripe-a)"/>
-    <rect x="64"  y="412" width="64" height="100" fill="url(#stripe-b)"/>
-    <rect x="128" y="412" width="64" height="100" fill="url(#stripe-a)"/>
-    <rect x="192" y="412" width="64" height="100" fill="url(#stripe-b)"/>
-    <rect x="256" y="412" width="64" height="100" fill="url(#stripe-a)"/>
-    <rect x="320" y="412" width="64" height="100" fill="url(#stripe-b)"/>
-    <rect x="384" y="412" width="64" height="100" fill="url(#stripe-a)"/>
-    <rect x="448" y="412" width="64" height="100" fill="url(#stripe-b)"/>
-  </g>
+  <!-- Accent halo behind ball -->
+  <circle cx="256" cy="256" r="220" fill="url(#accent-halo)"/>
 
-  <g transform="translate(256 240)">
-    <circle r="148" fill="url(#ball)" stroke="#0d1117" stroke-width="6"/>
+  <!-- Outer accent ring (blue) -->
+  <circle cx="256" cy="256" r="186" fill="none" stroke="url(#ring)" stroke-width="10"/>
+  <circle cx="256" cy="256" r="186" fill="none" stroke="#38bdf8" stroke-width="1" opacity="0.6"/>
 
+  <!-- Ball -->
+  <g transform="translate(256 256)">
+    <!-- Sphere -->
+    <circle r="160" fill="url(#ball-shade)" stroke="#0d1117" stroke-width="4"/>
+
+    <!-- Telstar pattern: 1 central pentagon + 5 hexagonal hints around it -->
     <g fill="#0d1117">
-      <polygon points="0,-58 55,-18 34,48 -34,48 -55,-18"/>
+      <!-- Central pentagon -->
+      <polygon points="0,-58 55,-18 34,52 -34,52 -55,-18"/>
 
-      <polygon points="0,-58 -55,-18 -94,-58 -68,-122 -8,-128"/>
-      <polygon points="0,-58 55,-18 94,-58 68,-122 8,-128"/>
-
-      <polygon points="-34,48 -78,98 -130,72 -120,4 -55,-18"/>
-      <polygon points="34,48 78,98 130,72 120,4 55,-18"/>
-
-      <polygon points="-34,48 0,118 34,48 36,90 -36,90"/>
+      <!-- Five outer panels (alternating black hex shapes that frame the pentagon) -->
+      <!-- Top -->
+      <polygon points="-55,-18 -90,-72 -34,-128 22,-128 55,-18 0,-58"/>
+      <!-- Top-right -->
+      <polygon points="55,-18 124,-46 144,30 90,72 34,52"/>
+      <!-- Bottom-right -->
+      <polygon points="34,52 90,72 78,140 14,150 -10,130"/>
+      <!-- Bottom-left -->
+      <polygon points="-34,52 -10,130 -78,140 -110,80 -55,-18 -34,52"/>
+      <!-- Left (sliver) -->
+      <polygon points="-55,-18 -110,80 -144,30 -124,-46 -90,-72"/>
     </g>
 
-    <ellipse cx="-44" cy="-58" rx="38" ry="20" fill="#ffffff" opacity="0.28"/>
-  </g>
+    <!-- Subtle gloss highlight -->
+    <ellipse cx="-58" cy="-72" rx="52" ry="26" fill="#ffffff" opacity="0.35"/>
+    <ellipse cx="62" cy="98" rx="22" ry="10" fill="#ffffff" opacity="0.18"/>
 
-  <g transform="translate(256 408)" text-anchor="middle" font-family="Impact, 'Bebas Neue', Arial Narrow, sans-serif" fill="#fde047" font-weight="900">
-    <text font-size="62" letter-spacing="4">PF26</text>
+    <!-- Inner shadow ring to give 3D -->
+    <circle r="158" fill="none" stroke="#0d1117" stroke-width="2" opacity="0.25"/>
   </g>
 </svg>
