@@ -16,7 +16,7 @@ function StateBadge({ state, match }: { state: MatchState; match: Match }) {
   if (state === "live") {
     const min = liveMinutesElapsed(match.kickoff_time);
     return (
-      <span className={`${base} border border-info/30 bg-info/15 text-info-soft shadow-live`}>
+      <span className={`${base} border border-danger/30 bg-danger/15 text-danger-soft shadow-live`}>
         <span className="live-dot" aria-hidden />
         En vivo · {min}&apos;
       </span>
@@ -52,7 +52,7 @@ function CenterScore({ state, match }: { state: MatchState; match: Match }) {
     const hasScore = match.home_score !== null && match.away_score !== null;
     return (
       <div className="text-center leading-none">
-        <div className="font-display text-4xl tabular-nums text-info-soft">
+        <div className="font-display text-4xl tabular-nums text-danger-soft">
           {hasScore ? (
             <>
               {match.home_score}
@@ -142,7 +142,7 @@ export function MatchCard({ match, bet }: { match: Match; bet?: Bet | null }) {
   let wrapperCls =
     "group relative block overflow-hidden rounded-card border bg-white/[0.04] p-4 shadow-card backdrop-blur-sm transition hover:bg-white/[0.07] hover:shadow-cardHover";
   if (state === "live") {
-    wrapperCls += " border-info/30 shadow-live";
+    wrapperCls += " border-danger/30 shadow-live";
   } else if (state === "closing-soon" && !bet) {
     wrapperCls += " border-warning/30";
   } else if (state === "finished") {

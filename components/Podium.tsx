@@ -31,10 +31,10 @@ export function Podium({ top }: { top: LeaderboardEntry[] }) {
           entry: first,
           place: 1 as const,
           barClass:
-            "bg-gradient-to-b from-trophy-200/30 to-trophy-200/10 text-trophy-200 border border-trophy-200/40",
+            "bg-gradient-to-b from-medal-gold/30 to-medal-gold/10 text-medal-gold border border-medal-gold/40",
           height: "h-28",
           medal: "🥇",
-          glow: "shadow-trophyGlow",
+          glow: "shadow-[0_0_32px_-4px_rgba(253,224,71,0.5)]",
         }
       : null,
     third
@@ -42,7 +42,7 @@ export function Podium({ top }: { top: LeaderboardEntry[] }) {
           entry: third,
           place: 3 as const,
           barClass:
-            "bg-gradient-to-b from-medal-bronze/30 to-medal-bronze/10 text-trophy-700 border border-medal-bronze/30",
+            "bg-gradient-to-b from-medal-bronze/30 to-medal-bronze/10 text-medal-bronze border border-medal-bronze/30",
           height: "h-14",
           medal: "🥉",
           glow: "shadow-[0_0_24px_-8px_rgba(205,127,50,0.5)]",

@@ -53,7 +53,7 @@ export function RankingTable({
             const isMe = e.user_id === currentUserId;
             const topRow =
               place === 1
-                ? "bg-trophy-200/[0.06]"
+                ? "bg-medal-gold/[0.06]"
                 : place === 2
                   ? "bg-medal-silver/[0.05]"
                   : place === 3

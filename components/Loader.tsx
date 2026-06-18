@@ -35,7 +35,7 @@ export default function Loader({
     ["--orbit-r" as string]: `${px * 0.44}px`,
     ["--satellite" as string]: `${Math.max(4, px * 0.075)}px`,
     ["--logo" as string]: `${px * 0.52}px`,
-    ["--trophy" as string]: "#fde047",
+    ["--trophy" as string]: "#38bdf8",
     ["--pitch" as string]: "#015816",
     ["--stadium" as string]: "#0d1117",
   };
@@ -61,8 +61,8 @@ export default function Loader({
         aria-hidden
         className="absolute inset-[8%] rounded-full"
         style={{
-          border: "1px solid rgba(253,224,71,0.18)",
-          boxShadow: "inset 0 0 12px rgba(253,224,71,0.08), 0 0 18px rgba(253,224,71,0.06)",
+          border: "1px solid rgba(56,189,248,0.18)",
+          boxShadow: "inset 0 0 12px rgba(56,189,248,0.08), 0 0 18px rgba(56,189,248,0.06)",
         }}
       />
 
@@ -99,7 +99,7 @@ export default function Loader({
             className="block h-full w-full rounded-full"
             style={{
               border: "2px solid var(--trophy)",
-              boxShadow: "0 0 12px rgba(253,224,71,0.45), inset 0 0 8px rgba(253,224,71,0.25)",
+              boxShadow: "0 0 12px rgba(56,189,248,0.45), inset 0 0 8px rgba(56,189,248,0.25)",
             }}
           />
         )}

@@ -16,16 +16,18 @@ const config: Config = {
           900: "#06110b",
           950: "#040a06",
         },
+        // "trophy" mantiene el nombre por compat con todas las clases (text-trophy-200, etc.)
+        // pero ahora es el azul accent estilo Mundial 2026.
         trophy: {
-          50: "#fef9c3",
-          100: "#fef08a",
-          200: "#fde047",
-          300: "#facc15",
-          400: "#fbbf24",
-          500: "#eab308",
-          600: "#d97706",
-          700: "#854d0e",
-          800: "#4a2010",
+          50: "#e0f2fe",
+          100: "#bae6fd",
+          200: "#38bdf8",
+          300: "#0ea5e9",
+          400: "#0284c7",
+          500: "#0369a1",
+          600: "#075985",
+          700: "#0c4a6e",
+          800: "#082f49",
         },
         stadium: {
           DEFAULT: "#0d1117",
@@ -76,7 +78,7 @@ const config: Config = {
         },
         // Aliases retro-compat con la paleta anterior (irán saliendo a medida que migremos)
         cesped: "#0E7C3A",
-        trofeo: "#fde047",
+        trofeo: "#38bdf8",
         cancha: "#ef4444",
         cielo: "#1E88E5",
         carbon: "#FAF7F0",
@@ -93,19 +95,19 @@ const config: Config = {
         pill: "9999px",
       },
       boxShadow: {
-        trophy: "0 0 0 1px rgba(253,224,71,0.25), 0 8px 24px -8px rgba(253,224,71,0.35)",
-        trophyGlow: "0 0 32px -4px rgba(250,204,21,0.45)",
+        trophy: "0 0 0 1px rgba(56,189,248,0.25), 0 8px 24px -8px rgba(56,189,248,0.35)",
+        trophyGlow: "0 0 32px -4px rgba(14,165,233,0.45)",
         card: "inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 24px -12px rgba(0,0,0,0.6)",
         cardHover: "inset 0 1px 0 rgba(255,255,255,0.10), 0 16px 40px -16px rgba(0,0,0,0.8)",
-        ring: "0 0 0 2px rgba(253,224,71,0.4)",
-        live: "0 0 0 2px rgba(56,189,248,0.35), 0 0 24px -6px rgba(56,189,248,0.5)",
+        ring: "0 0 0 2px rgba(56,189,248,0.4)",
+        live: "0 0 0 2px rgba(239,68,68,0.4), 0 0 24px -6px rgba(239,68,68,0.55)",
       },
       backgroundImage: {
         "pitch-stripes":
           "linear-gradient(90deg, #015816 0px, #015816 48px, #014611 48px, #014611 96px)",
         "stadium-spotlight":
-          "radial-gradient(circle at 50% 0%, rgba(250,204,21,0.28), transparent 60%)",
-        "trophy-halo": "radial-gradient(circle at 88% 12%, rgba(250,204,21,0.16), transparent 55%)",
+          "radial-gradient(circle at 50% 0%, rgba(56,189,248,0.28), transparent 60%)",
+        "trophy-halo": "radial-gradient(circle at 88% 12%, rgba(56,189,248,0.16), transparent 55%)",
         sheen: "linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent)",
         "card-top-glow": "linear-gradient(180deg, rgba(255,255,255,0.08), transparent)",
         "image-fade": "linear-gradient(180deg, transparent 42%, rgba(4,8,18,0.6))",

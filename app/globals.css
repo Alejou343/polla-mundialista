@@ -6,9 +6,9 @@
   /* Brand */
   --color-primary: #0e7c3a;
   --color-primary-deep: #014611;
-  --color-accent: #fde047;
-  --color-accent-hover: #facc15;
-  --color-accent-soft: rgba(253, 224, 71, 0.18);
+  --color-accent: #38bdf8;
+  --color-accent-hover: #0ea5e9;
+  --color-accent-soft: rgba(56, 189, 248, 0.18);
 
   /* Surfaces (dark-first) */
   --bg-app: #0d1117;
@@ -16,7 +16,7 @@
   --bg-card: rgba(255, 255, 255, 0.04);
   --bg-card-hover: rgba(255, 255, 255, 0.07);
   --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-trophy: rgba(253, 224, 71, 0.3);
+  --border-trophy: rgba(56, 189, 248, 0.3);
 
   /* Text */
   --text-primary: #faf7f0;
@@ -69,7 +69,7 @@
     font: inherit;
   }
   ::selection {
-    background: rgba(253, 224, 71, 0.4);
+    background: rgba(56, 189, 248, 0.4);
     color: #0d1117;
   }
 }
@@ -105,21 +105,21 @@
   .tabular-nums {
     font-variant-numeric: tabular-nums;
   }
-  /* Punto pulsante para badges "EN VIVO" */
+  /* Punto pulsante para badges "EN VIVO" — rojo broadcast clásico */
   .live-dot {
     position: relative;
     display: inline-block;
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 9999px;
-    background: var(--color-info);
+    background: var(--color-danger);
   }
   .live-dot::after {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: 9999px;
-    background: var(--color-info);
+    background: var(--color-danger);
     animation: livePing 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
   @keyframes livePing {
@@ -156,12 +156,12 @@
   margin-left: calc(var(--satellite) * -0.5);
   margin-top: calc(var(--satellite) * -0.5);
   border-radius: 9999px;
-  background: var(--trophy, #fde047);
+  background: var(--trophy, #38bdf8);
   will-change: transform, opacity, filter;
   box-shadow:
-    0 0 6px rgba(253, 224, 71, 0.9),
-    0 0 14px rgba(253, 224, 71, 0.55),
-    0 0 28px rgba(253, 224, 71, 0.25);
+    0 0 6px rgba(56, 189, 248, 0.9),
+    0 0 14px rgba(56, 189, 248, 0.55),
+    0 0 28px rgba(56, 189, 248, 0.25);
 }
 .loader-sat--a {
   transform: translate3d(var(--orbit-r), 0, 0);
@@ -177,7 +177,7 @@
 .loader-core {
   will-change: filter;
   animation: loader-core-breathe 2.4s ease-in-out infinite;
-  filter: drop-shadow(0 0 6px rgba(253, 224, 71, 0.25));
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.25));
 }
 .loader-logo {
   pointer-events: none;
@@ -213,10 +213,10 @@
 @keyframes loader-core-breathe {
   0%,
   100% {
-    filter: drop-shadow(0 0 4px rgba(253, 224, 71, 0.2));
+    filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.2));
   }
   50% {
-    filter: drop-shadow(0 0 10px rgba(253, 224, 71, 0.45));
+    filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.45));
   }
 }
 
@@ -247,6 +247,6 @@
     opacity: 0.7;
   }
   .loader-core {
-    filter: drop-shadow(0 0 6px rgba(253, 224, 71, 0.3));
+    filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.3));
   }
 }

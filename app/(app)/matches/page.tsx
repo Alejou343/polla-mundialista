@@ -143,7 +143,7 @@ export default async function MatchesPage({
 
       {visibleLive.length > 0 && (
         <section>
-          <h2 className="mb-2 flex items-center gap-2 font-display text-2xl uppercase tracking-wide text-info-soft">
+          <h2 className="mb-2 flex items-center gap-2 font-display text-2xl uppercase tracking-wide text-danger-soft">
             <span className="live-dot" aria-hidden />
             En vivo ahora
           </h2>

@@ -27,7 +27,7 @@ function HeaderBadge({ match }: { match: Match }) {
   if (state === "live") {
     const min = liveMinutesElapsed(match.kickoff_time);
     return (
-      <span className={`${base} border border-info/30 bg-info/15 text-info-soft shadow-live`}>
+      <span className={`${base} border border-danger/30 bg-danger/15 text-danger-soft shadow-live`}>
         <span className="live-dot" aria-hidden />
         En vivo · {min}&apos;
       </span>
@@ -160,7 +160,7 @@ export default async function MatchDetailPage({ params }: { params: { id: string
                   {match.away_score}
                 </div>
               ) : isLive ? (
-                <div className="font-display text-7xl leading-none tabular-nums text-info-soft">
+                <div className="font-display text-7xl leading-none tabular-nums text-danger-soft">
                   <span className="text-ink-muted/40">—</span>
                   <span className="mx-2 text-ink-muted/40">–</span>
                   <span className="text-ink-muted/40">—</span>
@@ -203,7 +203,7 @@ export default async function MatchDetailPage({ params }: { params: { id: string
               }
             />
           ) : isLive ? (
-            <span className="font-headline text-xs uppercase tracking-[0.14em] text-info-soft">
+            <span className="font-headline text-xs uppercase tracking-[0.14em] text-danger-soft">
               🔒 Cerrada — en curso
             </span>
           ) : (
@@ -234,7 +234,7 @@ export default async function MatchDetailPage({ params }: { params: { id: string
             ) : (
               <p className="text-sm text-ink-muted">No alcanzaste a apostar 😬</p>
             )}
-            <p className="mt-1 text-xs text-info-soft">
+            <p className="mt-1 text-xs text-danger-soft">
               🔒 Apuestas cerradas — ya empezó el partido. Esperá al final para ver los puntos.
             </p>
           </div>
