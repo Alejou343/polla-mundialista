@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { Bet, Match } from "@/lib/types";
 import { teamDisplay } from "@/lib/teams";
-import { stageLabel, timeShort } from "@/lib/format";
+import { stageLabel } from "@/lib/format";
+import { LocalTime } from "@/components/LocalTime";
 import { computeMatchState, liveMinutesElapsed, type MatchState } from "@/lib/match-state";
 import { PointsBadge } from "@/components/PointsBadge";
 import { Flag } from "@/components/Flag";
@@ -73,9 +74,11 @@ function CenterScore({ state, match }: { state: MatchState; match: Match }) {
   return (
     <div className="text-center leading-none">
       <div className="font-display text-3xl text-trophy-200">VS</div>
-      <div className="mt-1 font-headline text-[11px] uppercase tracking-[0.18em] tabular-nums text-ink-muted">
-        {timeShort(match.kickoff_time)}
-      </div>
+      <LocalTime
+        iso={match.kickoff_time}
+        mode="time"
+        className="mt-1 block font-headline text-[11px] uppercase tracking-[0.18em] tabular-nums text-ink-muted"
+      />
     </div>
   );
 }

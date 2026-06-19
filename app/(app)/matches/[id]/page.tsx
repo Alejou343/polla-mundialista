@@ -10,7 +10,8 @@ import { Countdown } from "@/components/Countdown";
 import { AutoRefreshOnExpire } from "@/components/AutoRefreshOnExpire";
 import { ExactScoreCelebration } from "@/components/ExactScoreCelebration";
 import { teamCode, teamDisplay } from "@/lib/teams";
-import { stageLabel, dateTimeFull, timeShort } from "@/lib/format";
+import { stageLabel } from "@/lib/format";
+import { LocalTime } from "@/components/LocalTime";
 import { computeMatchState, liveMinutesElapsed } from "@/lib/match-state";
 import { calculatePoints } from "@/lib/scoring";
 import type { Bet, Match } from "@/lib/types";
@@ -138,9 +139,9 @@ export default async function MatchDetailPage({ params }: { params: { id: string
             📍 {match.venue ?? "Sede por confirmar"}
           </p>
           <p className="text-center font-headline text-xs uppercase tracking-[0.18em] text-ivory/80">
-            {dateTimeFull(match.kickoff_time)}{" "}
+            <LocalTime iso={match.kickoff_time} mode="full" />{" "}
             <span className="font-body normal-case tracking-normal text-ink-muted">
-              (hora Colombia)
+              (tu hora local)
             </span>
           </p>
 
@@ -169,9 +170,11 @@ export default async function MatchDetailPage({ params }: { params: { id: string
                 <div className="font-display text-5xl leading-none text-trophy-200/80">VS</div>
               )}
               {isOpen && (
-                <div className="mt-2 font-headline text-xs uppercase tracking-[0.18em] tabular-nums text-ink-muted">
-                  {timeShort(match.kickoff_time)}
-                </div>
+                <LocalTime
+                  iso={match.kickoff_time}
+                  mode="time"
+                  className="mt-2 block font-headline text-xs uppercase tracking-[0.18em] tabular-nums text-ink-muted"
+                />
               )}
             </div>
 

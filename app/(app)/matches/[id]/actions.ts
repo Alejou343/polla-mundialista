@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { logError } from "@/lib/log-error";
 import type { Result } from "@/lib/types";
 
 const BetSchema = z.object({
@@ -26,8 +27,19 @@ export async function placeBetAction(
   _prevState: Result<{ saved: true }> | null,
   formData: FormData,
 ): Promise<Result<{ saved: true }>> {
+  const rawHome = formData.get("predictedHome");
+  const rawAway = formData.get("predictedAway");
+  const rawMatchId = String(formData.get("matchId") ?? "");
+
   const parsed = parseFormData(formData);
   if (!parsed.success) {
+    await logError({
+      action: "placeBet",
+      code: "zod_validation",
+      message: parsed.error.message,
+      matchId: rawMatchId || null,
+      payload: { rawHome: String(rawHome), rawAway: String(rawAway) },
+    });
     return { ok: false, error: "Marcador inválido (entre 0 y 20)." };
   }
 
@@ -35,16 +47,41 @@ export async function placeBetAction(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: "No autenticado." };
+  if (!user) {
+    await logError({
+      action: "placeBet",
+      code: "no_auth",
+      matchId: parsed.data.matchId,
+    });
+    return { ok: false, error: "No autenticado." };
+  }
 
-  // Defensa en profundidad: revalidar kickoff aquí, además de RLS.
   const { data: match, error: matchErr } = await supabase
     .from("matches")
     .select("kickoff_time, status")
     .eq("id", parsed.data.matchId)
     .single();
-  if (matchErr || !match) return { ok: false, error: "Partido no encontrado." };
+  if (matchErr || !match) {
+    await logError({
+      action: "placeBet",
+      code: "match_not_found",
+      message: matchErr?.message,
+      userId: user.id,
+      matchId: parsed.data.matchId,
+    });
+    return { ok: false, error: "Partido no encontrado." };
+  }
   if (new Date(match.kickoff_time) <= new Date()) {
+    await logError({
+      action: "placeBet",
+      code: "kickoff_passed",
+      userId: user.id,
+      matchId: parsed.data.matchId,
+      payload: {
+        kickoff_time: match.kickoff_time,
+        attempted_at: new Date().toISOString(),
+      },
+    });
     return { ok: false, error: "Apuestas cerradas para este partido." };
   }
 
@@ -57,7 +94,20 @@ export async function placeBetAction(
     },
     { onConflict: "user_id,match_id" },
   );
-  if (error) return { ok: false, error: error.message };
+  if (error) {
+    await logError({
+      action: "placeBet",
+      code: "db_error",
+      message: error.message,
+      userId: user.id,
+      matchId: parsed.data.matchId,
+      payload: {
+        predicted_home: parsed.data.predictedHome,
+        predicted_away: parsed.data.predictedAway,
+      },
+    });
+    return { ok: false, error: error.message };
+  }
 
   revalidatePath("/matches");
   revalidatePath(`/matches/${parsed.data.matchId}`);
@@ -71,15 +121,32 @@ export async function deleteBetAction(matchId: string): Promise<Result<null>> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: "No autenticado." };
+  if (!user) {
+    await logError({ action: "deleteBet", code: "no_auth", matchId });
+    return { ok: false, error: "No autenticado." };
+  }
 
   const { data: match } = await supabase
     .from("matches")
     .select("kickoff_time")
     .eq("id", matchId)
     .single();
-  if (!match) return { ok: false, error: "Partido no encontrado." };
+  if (!match) {
+    await logError({
+      action: "deleteBet",
+      code: "match_not_found",
+      userId: user.id,
+      matchId,
+    });
+    return { ok: false, error: "Partido no encontrado." };
+  }
   if (new Date(match.kickoff_time) <= new Date()) {
+    await logError({
+      action: "deleteBet",
+      code: "kickoff_passed",
+      userId: user.id,
+      matchId,
+    });
     return { ok: false, error: "Apuestas cerradas para este partido." };
   }
 
@@ -88,7 +155,16 @@ export async function deleteBetAction(matchId: string): Promise<Result<null>> {
     .delete()
     .eq("user_id", user.id)
     .eq("match_id", matchId);
-  if (error) return { ok: false, error: error.message };
+  if (error) {
+    await logError({
+      action: "deleteBet",
+      code: "db_error",
+      message: error.message,
+      userId: user.id,
+      matchId,
+    });
+    return { ok: false, error: error.message };
+  }
 
   revalidatePath("/matches");
   revalidatePath(`/matches/${matchId}`);

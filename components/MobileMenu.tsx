@@ -201,7 +201,7 @@ export function MobileMenu({
       </nav>
 
       <footer className="border-t border-white/5 bg-stadium-200/60 px-4 py-3 text-center font-headline text-[10px] uppercase tracking-[0.22em] text-ink-muted">
-        Horarios en hora de Colombia · Polla Familiar 26
+        Horarios en tu hora local · Polla Familiar 26
       </footer>
     </div>
   );

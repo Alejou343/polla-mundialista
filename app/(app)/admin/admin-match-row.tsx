@@ -3,7 +3,8 @@
 import { useState, useTransition } from "react";
 import type { Match } from "@/lib/types";
 import { teamDisplay } from "@/lib/teams";
-import { stageLabel, timeShort, dayShort } from "@/lib/format";
+import { stageLabel } from "@/lib/format";
+import { LocalTime } from "@/components/LocalTime";
 import { Flag } from "@/components/Flag";
 import Loader from "@/components/Loader";
 
@@ -44,7 +45,8 @@ export function AdminMatchRow({ match }: { match: Match }) {
       <div className="flex items-center justify-between gap-2 font-headline text-[10px] uppercase tracking-[0.18em] text-ink-muted">
         <span className="truncate">{stageLabel(match.stage, match.group_name)}</span>
         <span className="whitespace-nowrap">
-          {timeShort(match.kickoff_time)} · {dayShort(match.kickoff_time)}
+          <LocalTime iso={match.kickoff_time} mode="time" /> ·{" "}
+          <LocalTime iso={match.kickoff_time} mode="dayShort" />
         </span>
       </div>
 

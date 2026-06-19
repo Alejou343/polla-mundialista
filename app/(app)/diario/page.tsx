@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { tournamentDayKey, tournamentDayLong, timeShort } from "@/lib/format";
+import { tournamentDayKey, tournamentDayLong } from "@/lib/format";
 import { formatDailyDigest } from "@/lib/daily-digest";
+import { LocalTime } from "@/components/LocalTime";
 import { ShareButtons } from "./share-buttons";
 import type { Match } from "@/lib/types";
 
@@ -29,7 +30,6 @@ export default async function DiarioPage() {
   const nextDayLabel = nextDayWithMatches
     ? capitalize(tournamentDayLong(nextDayWithMatches.kickoff_time))
     : null;
-  const nextDayTime = nextDayWithMatches ? timeShort(nextDayWithMatches.kickoff_time) : null;
 
   const referenceIso = todayMatches[0]?.kickoff_time ?? nowIso;
   const dayLabel = capitalize(tournamentDayLong(referenceIso));
@@ -74,7 +74,7 @@ export default async function DiarioPage() {
             <strong className="font-headline uppercase tracking-wide text-trophy-200">
               {nextDayLabel}
             </strong>{" "}
-            a partir de las {nextDayTime}.
+            a partir de las <LocalTime iso={nextDayWithMatches.kickoff_time} mode="time" />.
           </p>
           <Link
             href="/matches"

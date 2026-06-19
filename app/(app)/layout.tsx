@@ -48,7 +48,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <main className="flex-1 pb-24 md:pb-8">{children}</main>
 
       <footer className="hidden border-t border-white/5 py-4 text-center text-[11px] uppercase tracking-[0.2em] text-ink-muted md:block">
-        Polla Familiar 26 · Horarios en hora de Colombia
+        Polla Familiar 26 · Horarios en tu hora local · Día del torneo en hora Colombia
       </footer>
 
       <BottomNav pendingCount={pendingCount} />
