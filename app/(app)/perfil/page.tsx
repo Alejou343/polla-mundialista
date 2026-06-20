@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { NameForm, PasswordForm } from "./perfil-form";
 import { Avatar } from "@/components/Avatar";
+import { CopyButton } from "@/components/CopyButton";
 import { signoutAction } from "@/app/(app)/actions";
 import { monthYear } from "@/lib/format";
 import type { LeaderboardEntry } from "@/lib/types";
@@ -30,6 +31,8 @@ export default async function PerfilPage() {
   const position = entries.filter((e) => e.total_points > points).length + 1;
 
   const displayName = profile?.display_name ?? "Familiar";
+  const isAdmin = !!profile?.is_admin;
+  const inviteCode = process.env.FAMILY_INVITE_CODE ?? "(env no configurada)";
 
   return (
     <div className="mx-auto max-w-screen-sm space-y-5 px-4 py-6">
@@ -84,6 +87,26 @@ export default async function PerfilPage() {
         <h2 className="kicker mb-3">Cambiar contraseña</h2>
         <PasswordForm />
       </section>
+
+      {isAdmin && (
+        <section className="surface-card border-trophy-200/30 p-5">
+          <h2 className="kicker text-trophy-200">⚙️ Zona admin · Código familiar</h2>
+          <p className="mt-1 text-xs text-ink-muted">
+            Compártelo solo con quien quiera unirse a la polla. No lo postees en redes — esto es
+            solo para la familia.
+          </p>
+          <div className="mt-3 flex items-center gap-2 rounded-card border border-white/10 bg-stadium-200/60 p-2">
+            <code className="flex-1 truncate font-mono text-base tracking-[0.18em] text-trophy-200">
+              {inviteCode}
+            </code>
+            <CopyButton value={inviteCode} />
+          </div>
+          <p className="mt-3 text-xs text-ink-muted">
+            ¿Cargar un resultado? Entra al partido terminado desde{" "}
+            <span className="text-ivory">Partidos</span> y usa la zona admin de esa pantalla.
+          </p>
+        </section>
+      )}
 
       <form action={signoutAction} className="text-center">
         <button

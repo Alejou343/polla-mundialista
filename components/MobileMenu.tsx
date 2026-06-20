@@ -4,17 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  ListChecks,
-  Trophy,
-  Share2,
-  Wrench,
-  User,
-  HelpCircle,
-  LogOut,
-  X,
-  Menu,
-} from "lucide-react";
+import { ListChecks, Trophy, Share2, User, HelpCircle, LogOut, X, Menu } from "lucide-react";
 import { Avatar } from "./Avatar";
 import { signoutAction } from "@/app/(app)/actions";
 
@@ -77,7 +67,6 @@ export function MobileMenu({
     { href: "/matches", label: "Partidos", Icon: ListChecks, badge: pendingCount },
     { href: "/ranking", label: "Ranking", Icon: Trophy },
     { href: "/diario", label: "Compartir del día", Icon: Share2 },
-    ...(isAdmin ? [{ href: "/admin", label: "Panel admin", Icon: Wrench }] : []),
     { href: "/perfil", label: "Mi perfil", Icon: User },
   ];
 
