@@ -37,6 +37,12 @@ export default async function MatchesPage({
     data: { user },
   } = await supabase.auth.getUser();
   const userId = user!.id;
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", userId)
+    .single();
+  const isAdmin = !!profile?.is_admin;
   const { data: myBets } = await supabase.from("bets").select("*").eq("user_id", userId);
   const betByMatch = new Map<string, Bet>((myBets ?? []).map((b) => [b.match_id, b as Bet]));
 
@@ -149,7 +155,7 @@ export default async function MatchesPage({
           </h2>
           <div className="space-y-2">
             {visibleLive.map((m) => (
-              <MatchCard key={m.id} match={m} bet={betByMatch.get(m.id)} />
+              <MatchCard key={m.id} match={m} bet={betByMatch.get(m.id)} isAdmin={isAdmin} />
             ))}
           </div>
         </section>
@@ -161,7 +167,7 @@ export default async function MatchesPage({
             <DateGroupHeader isoDate={ms[0].kickoff_time} />
             <div className="space-y-2">
               {ms.map((m) => (
-                <MatchCard key={m.id} match={m} bet={betByMatch.get(m.id)} />
+                <MatchCard key={m.id} match={m} bet={betByMatch.get(m.id)} isAdmin={isAdmin} />
               ))}
             </div>
           </section>
@@ -180,7 +186,7 @@ export default async function MatchesPage({
           </summary>
           <div className="mt-4 space-y-2">
             {visibleFinished.map((m) => (
-              <MatchCard key={m.id} match={m} bet={betByMatch.get(m.id)} />
+              <MatchCard key={m.id} match={m} bet={betByMatch.get(m.id)} isAdmin={isAdmin} />
             ))}
           </div>
         </details>
@@ -189,7 +195,7 @@ export default async function MatchesPage({
       {!showFinishedAccordion && view === "played" && visibleFinished.length > 0 && (
         <section className="space-y-2">
           {visibleFinished.map((m) => (
-            <MatchCard key={m.id} match={m} bet={betByMatch.get(m.id)} />
+            <MatchCard key={m.id} match={m} bet={betByMatch.get(m.id)} isAdmin={isAdmin} />
           ))}
         </section>
       )}

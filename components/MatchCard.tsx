@@ -39,12 +39,23 @@ function StateBadge({ state, match }: { state: MatchState; match: Match }) {
 
 function CenterScore({ state, match }: { state: MatchState; match: Match }) {
   if (state === "finished") {
+    const hasScore = match.home_score !== null && match.away_score !== null;
     return (
       <div className="text-center leading-none">
         <div className="font-display text-4xl tabular-nums text-ivory">
-          {match.home_score ?? 0}
-          <span className="mx-1 text-ink-muted/40">–</span>
-          {match.away_score ?? 0}
+          {hasScore ? (
+            <>
+              {match.home_score}
+              <span className="mx-1 text-ink-muted/40">–</span>
+              {match.away_score}
+            </>
+          ) : (
+            <>
+              <span className="text-ink-muted/40">—</span>
+              <span className="mx-1 text-ink-muted/40">–</span>
+              <span className="text-ink-muted/40">—</span>
+            </>
+          )}
         </div>
       </div>
     );
@@ -138,9 +149,19 @@ function Footer({
   return <span className="text-ink-muted">Sin apuesta</span>;
 }
 
-export function MatchCard({ match, bet }: { match: Match; bet?: Bet | null }) {
+export function MatchCard({
+  match,
+  bet,
+  isAdmin = false,
+}: {
+  match: Match;
+  bet?: Bet | null;
+  isAdmin?: boolean;
+}) {
   const state = computeMatchState(match);
   const userMissedIt = !bet && state !== "upcoming" && state !== "closing-soon";
+  const needsScoring =
+    isAdmin && state === "finished" && (match.home_score === null || match.away_score === null);
 
   let wrapperCls =
     "group relative block overflow-hidden rounded-card border bg-white/[0.04] p-4 shadow-card backdrop-blur-sm transition hover:bg-white/[0.07] hover:shadow-cardHover";
@@ -195,10 +216,17 @@ export function MatchCard({ match, bet }: { match: Match; bet?: Bet | null }) {
         <Footer state={state} match={match} bet={bet} />
       </div>
 
-      {userMissedIt && !bet && (
-        <p className="mt-3 rounded-md border border-white/5 bg-white/[0.03] px-2 py-1 text-[11px] text-ink-muted">
-          🔒 Ya empezó · no se puede apostar
+      {needsScoring ? (
+        <p className="mt-3 rounded-md border border-warning/30 bg-warning/15 px-2 py-1 text-center font-headline text-[11px] uppercase tracking-[0.14em] text-warning-soft">
+          ⚠ Falta puntuar · toca para cargar
         </p>
+      ) : (
+        userMissedIt &&
+        !bet && (
+          <p className="mt-3 rounded-md border border-white/5 bg-white/[0.03] px-2 py-1 text-[11px] text-ink-muted">
+            🔒 Ya empezó · no se puede apostar
+          </p>
+        )
       )}
     </Link>
   );

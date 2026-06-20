@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { BetForm } from "./bet-form";
+import { AdminScorePanel } from "./admin-score-panel";
 import { BetsList } from "@/components/BetsList";
 import { PointsBadge } from "@/components/PointsBadge";
 import { Flag } from "@/components/Flag";
@@ -64,6 +65,13 @@ export default async function MatchDetailPage({ params }: { params: { id: string
     data: { user },
   } = await supabase.auth.getUser();
   const userId = user!.id;
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", userId)
+    .single();
+  const isAdmin = !!profile?.is_admin;
 
   const { data: myBetData } = await supabase
     .from("bets")
@@ -187,6 +195,18 @@ export default async function MatchDetailPage({ params }: { params: { id: string
           </div>
         </div>
       </header>
+
+      {/* Zona admin: puntuar en contexto (solo admin, partido en vivo o terminado) */}
+      {isAdmin && (isFinished || isLive) && (
+        <AdminScorePanel
+          matchId={match.id}
+          initialHome={match.home_score}
+          initialAway={match.away_score}
+          homeShort={teamCode(match.home_team)}
+          awayShort={teamCode(match.away_team)}
+          alreadyScored={match.home_score !== null && match.away_score !== null}
+        />
+      )}
 
       {/* Tu apuesta */}
       <section className="mt-6">
