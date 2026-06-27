@@ -59,9 +59,43 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
   }
 
+  // Reconciliación: openfootball resuelve placeholders de eliminatorias cambiando
+  // los nombres de equipo, y como el id se deriva de ellos (makeId), cada cambio
+  // crea una fila NUEVA y deja la vieja huérfana. Borramos las filas de eliminatorias
+  // que ya no están en el JSON actual, salvo que estén finalizadas o tengan apuestas
+  // (esas se preservan y se repuntan a mano si hiciera falta).
+  const KNOCKOUT_STAGES = ["r32", "r16", "qf", "sf", "final", "third"];
+  const fixtureIds = new Set(fixtures.map((f) => f.id));
+  let reconciled = 0;
+
+  const { data: knockoutRows } = await admin
+    .from("matches")
+    .select("id, status")
+    .in("stage", KNOCKOUT_STAGES);
+
+  const stale = (knockoutRows ?? []).filter(
+    (r) => !fixtureIds.has(r.id) && r.status !== "finished",
+  );
+
+  if (stale.length > 0) {
+    const staleIds = stale.map((r) => r.id);
+    const { data: betsOnStale } = await admin
+      .from("bets")
+      .select("match_id")
+      .in("match_id", staleIds);
+    const betMatchIds = new Set((betsOnStale ?? []).map((b) => b.match_id));
+    const toDelete = staleIds.filter((id) => !betMatchIds.has(id));
+
+    if (toDelete.length > 0) {
+      const { error: delErr } = await admin.from("matches").delete().in("id", toDelete);
+      if (!delErr) reconciled = toDelete.length;
+    }
+  }
+
   return NextResponse.json({
     ok: true,
     total: fixtures.length,
     preserved: rows.filter((r) => r.status === "finished").length,
+    reconciled,
   });
 }
