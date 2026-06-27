@@ -3,23 +3,23 @@
 import { useState } from "react";
 import { Tablero, type Scenario } from "./tablero";
 import { Bracket } from "./bracket";
+import { CopaGuideModal } from "./copa-guide-modal";
 
 type Tab = "tablero" | "bracket";
 
-// El control de demo maneja AMBAS vistas a la vez.
-const DEMO_TO_COMPLETED: Record<Scenario, number> = { pending: 0, curso: 3, final: 5 };
-const DEMOS: { value: Scenario; label: string }[] = [
-  { value: "pending", label: "Antes" },
-  { value: "curso", label: "En curso" },
-  { value: "final", label: "Campeón" },
-];
+// Estado del torneo (mock). En la app real sale de draft_config + matches.
+// Cambia estas dos constantes para previsualizar otros estados durante el dev:
+//   "pending" | "curso" | "final"  ·  completed: 0..5
+const SCENARIO: Scenario = "curso";
+const COMPLETED = 3;
 
 export function CopaView() {
-  const [demo, setDemo] = useState<Scenario>("curso");
   const [tab, setTab] = useState<Tab>("tablero");
 
   return (
     <div className="mx-auto max-w-screen-sm space-y-4 px-4 py-6">
+      <CopaGuideModal />
+
       <header>
         <p className="kicker">Juego paralelo</p>
         <h1 className="mt-1 font-display text-4xl uppercase tracking-wide text-trophy-200">
@@ -29,29 +29,6 @@ export function CopaView() {
           Cada quien apadrina 2 equipos al azar. Gana quien tenga al campeón del mundo.
         </p>
       </header>
-
-      {/* Control de demo (se quita en producción) */}
-      <div className="rounded-card border border-dashed border-sky-400/40 bg-sky-400/[0.06] p-3">
-        <p className="font-headline text-[10px] uppercase tracking-[0.18em] text-sky-300">
-          🧪 Estado del torneo (demo)
-        </p>
-        <div className="mt-2 flex gap-1.5">
-          {DEMOS.map((d) => (
-            <button
-              key={d.value}
-              type="button"
-              onClick={() => setDemo(d.value)}
-              className={`flex-1 rounded-pill px-2 py-1.5 font-headline text-[10px] uppercase tracking-[0.12em] transition ${
-                demo === d.value
-                  ? "bg-trophy-200 text-stadium"
-                  : "border border-white/10 bg-white/[0.03] text-ink-muted hover:text-ivory"
-              }`}
-            >
-              {d.label}
-            </button>
-          ))}
-        </div>
-      </div>
 
       {/* Control segmentado: Tablero | Bracket */}
       <div
@@ -82,11 +59,7 @@ export function CopaView() {
         ))}
       </div>
 
-      {tab === "tablero" ? (
-        <Tablero scenario={demo} />
-      ) : (
-        <Bracket completed={DEMO_TO_COMPLETED[demo]} />
-      )}
+      {tab === "tablero" ? <Tablero scenario={SCENARIO} /> : <Bracket completed={COMPLETED} />}
     </div>
   );
 }
