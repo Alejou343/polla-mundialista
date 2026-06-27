@@ -48,9 +48,44 @@ export interface LeaderboardEntry {
   total_bets: number;
 }
 
-export type Result<T> =
-  | { ok: true; data: T }
-  | { ok: false; error: string };
+export type Result<T> = { ok: true; data: T } | { ok: false; error: string };
+
+// ─── Sorteo de campeón ────────────────────────────────────────────────────────
+
+export type DraftStatus = "pending" | "drawn" | "closed";
+
+export type TeamStatus = "vivo" | "eliminado" | "campeon";
+
+export interface DraftConfig {
+  id: 1;
+  status: DraftStatus;
+  pot_amount: number; // COP
+  draw_seed: string | null;
+  drawn_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DraftEntry {
+  id: string;
+  user_id: string;
+  team_code: string; // 'BRA', 'ARG', etc.
+  team_name: string; // 'Brazil', 'Argentina'
+  r32_match_id: string;
+  assigned_at: string;
+}
+
+/** Fila de la vista draft_team_status: estado en tiempo real de cada equipo. */
+export interface DraftTeamStatus {
+  id: string;
+  user_id: string;
+  participant_name: string;
+  team_code: string;
+  team_name: string;
+  r32_match_id: string;
+  assigned_at: string;
+  team_status: TeamStatus;
+}
 
 export const STAGE_LABELS: Record<Stage, string> = {
   group: "Fase de grupos",
