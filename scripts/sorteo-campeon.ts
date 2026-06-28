@@ -28,9 +28,9 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-type Matchup = { home: string; away: string };
-type Input = { seed: string; participants: string[]; matchups: Matchup[] };
-type Assignment = { participant: string; teams: [string, string] };
+export type Matchup = { home: string; away: string };
+export type Input = { seed: string; participants: string[]; matchups: Matchup[] };
+export type Assignment = { participant: string; teams: [string, string] };
 
 // ── PRNG determinístico (mulberry32 + hash de string) ────────────────────────
 // No usamos Math.random(): necesitamos reproducibilidad a partir de la semilla.
@@ -64,7 +64,7 @@ function shuffle<T>(arr: T[], rng: () => number): T[] {
 }
 
 // ── Núcleo del sorteo ────────────────────────────────────────────────────────
-function runDraw(input: Input): { assignments: Assignment[]; attempt: number } {
+export function runDraw(input: Input): { assignments: Assignment[]; attempt: number } {
   const { seed, participants, matchups } = input;
 
   if (participants.length !== 16) {
@@ -197,4 +197,7 @@ function main() {
   console.log(formatWhatsApp(input, result));
 }
 
-main();
+// Solo corre si se invoca directamente (no al importar runDraw desde otro script).
+if (process.argv[1] && /sorteo-campeon\.ts$/.test(process.argv[1].replace(/\\/g, "/"))) {
+  main();
+}
