@@ -39,15 +39,26 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   const realHome = parsed.data.home_score;
   const realAway = parsed.data.away_score;
 
-  const { error: matchErr } = await adminClient
+  // Para eliminatorias con marcador decisivo en 90', fijamos también quién avanzó.
+  // Si el admin marca empate (fue a penales) no se puede deducir aquí: se deja
+  // el winner_code como esté y lo resuelve el sync de openfootball.
+  const { data: meta } = await adminClient
     .from("matches")
-    .update({
-      home_score: realHome,
-      away_score: realAway,
-      status: "finished",
-      scored_at: new Date().toISOString(),
-    })
-    .eq("id", params.id);
+    .select("stage, home_team_code, away_team_code")
+    .eq("id", params.id)
+    .single();
+
+  const update: Record<string, unknown> = {
+    home_score: realHome,
+    away_score: realAway,
+    status: "finished",
+    scored_at: new Date().toISOString(),
+  };
+  if (meta && meta.stage !== "group" && realHome !== realAway) {
+    update.winner_code = realHome > realAway ? meta.home_team_code : meta.away_team_code;
+  }
+
+  const { error: matchErr } = await adminClient.from("matches").update(update).eq("id", params.id);
   if (matchErr) {
     return NextResponse.json({ error: matchErr.message }, { status: 500 });
   }

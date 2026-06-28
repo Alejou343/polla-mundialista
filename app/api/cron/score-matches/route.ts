@@ -68,6 +68,8 @@ export async function GET(req: Request) {
         away_score: realAway,
         status: "finished",
         scored_at: new Date().toISOString(),
+        // Quién avanzó (incluye prórroga/penales); null en grupos o empate sin desempate.
+        winner_code: fresh.winner_code,
       })
       .eq("id", match.id);
     if (upErr) continue;
