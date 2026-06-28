@@ -6,11 +6,8 @@ import { teamDisplay } from "@/lib/teams";
 
 const STORAGE_KEY = "copa-2026-sorteo-revelado";
 
-// Equipos del usuario logueado. En la app real salen de draft_entries (resultado
-// del sorteo YA corrido, determinístico y verificable con la semilla pública).
-// El "giro" de abajo es SOLO una animación de revelado: NO re-sortea nada.
-const MI_PAREJA = ["Brazil", "Italy"];
-
+// El "giro" es SOLO una animación de revelado de la pareja YA asignada por el
+// sorteo (determinístico y verificable con la semilla pública): NO re-sortea nada.
 // Pool de banderas para el efecto de giro (equipos confirmados → bandera real).
 const POOL = [
   "Brazil",
@@ -29,7 +26,8 @@ const POOL = [
 
 type Phase = "intro" | "spinning" | "done";
 
-export function CopaGuideModal() {
+export function CopaGuideModal({ pair }: { pair: { name: string; code: string }[] }) {
+  const miPareja = [pair[0].name, pair[1].name];
   const [open, setOpen] = useState(true);
   const [drawn, setDrawn] = useState(false); // ¿ya reveló su pareja antes?
   const [phase, setPhase] = useState<Phase>("intro");
@@ -79,14 +77,14 @@ export function CopaGuideModal() {
     timers.current.push(
       window.setTimeout(() => {
         lock0 = true;
-        setReels((prev) => [MI_PAREJA[0], prev[1]]);
+        setReels((prev) => [miPareja[0], prev[1]]);
       }, 1500),
     );
     timers.current.push(
       window.setTimeout(() => {
         lock1 = true;
         if (intervalRef.current) clearInterval(intervalRef.current);
-        setReels([MI_PAREJA[0], MI_PAREJA[1]]);
+        setReels([miPareja[0], miPareja[1]]);
         setPhase("done");
         try {
           localStorage.setItem(STORAGE_KEY, "1");
