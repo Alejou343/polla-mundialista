@@ -1,0 +1,39 @@
+{
+  "seed": "2-1",
+  "participants": [
+    "Alejandro",
+    "angela",
+    "Camilo Uribe",
+    "Carlos Mario uribe",
+    "Carolina",
+    "David Duque",
+    "jaime uribe",
+    "Juan Carlos Duque Rivas",
+    "Juan Pablo",
+    "julian",
+    "Lili uribe",
+    "Mariana",
+    "Nana",
+    "Natali",
+    "olga lucia",
+    "Simon"
+  ],
+  "matchups": [
+    { "home": "South Africa", "away": "Canada" },
+    { "home": "Germany", "away": "Paraguay" },
+    { "home": "Netherlands", "away": "Morocco" },
+    { "home": "Brazil", "away": "Japan" },
+    { "home": "France", "away": "Sweden" },
+    { "home": "Ivory Coast", "away": "Norway" },
+    { "home": "Mexico", "away": "Ecuador" },
+    { "home": "England", "away": "DR Congo" },
+    { "home": "USA", "away": "Bosnia & Herzegovina" },
+    { "home": "Belgium", "away": "Senegal" },
+    { "home": "Portugal", "away": "Croatia" },
+    { "home": "Spain", "away": "Austria" },
+    { "home": "Switzerland", "away": "Algeria" },
+    { "home": "Argentina", "away": "Cape Verde" },
+    { "home": "Colombia", "away": "Ghana" },
+    { "home": "Australia", "away": "Egypt" }
+  ]
+}
