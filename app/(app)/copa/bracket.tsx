@@ -1,46 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
 import { Flag } from "@/components/Flag";
 import { teamDisplay } from "@/lib/teams";
+import type { BracketData, BracketNode, TeamRef } from "@/lib/copa-bracket";
 
-const R32_TEAMS = [
-  "Brazil",
-  "Japan",
-  "Spain",
-  "Morocco",
-  "France",
-  "Senegal",
-  "England",
-  "Ecuador",
-  "Argentina",
-  "Nigeria",
-  "Germany",
-  "Mexico",
-  "Portugal",
-  "USA",
-  "Netherlands",
-  "Croatia",
-  "Belgium",
-  "Canada",
-  "Italy",
-  "Switzerland",
-  "Colombia",
-  "Australia",
-  "Uruguay",
-  "Ghana",
-  "Denmark",
-  "Poland",
-  "Korea Republic",
-  "Serbia",
-  "Norway",
-  "Egypt",
-  "Austria",
-  "Qatar",
-];
-
-// En la app real, este set = los 2 equipos del usuario logueado (draft_entries).
-const MIS_EQUIPOS = new Set(["Brazil", "Italy"]);
 const SIDE_LABELS = ["1/16", "1/8", "1/4", "½"];
 
 const SIDE_W = 28;
@@ -67,7 +30,6 @@ function nodeY(count: number, i: number): number {
   return HEADER_H + (BRACKET_H - HEADER_H) * ((i + 0.5) / count);
 }
 
-// Conectores en "codo" (solo horizontales y verticales).
 function buildConnectors(): { x1: number; y1: number; x2: number; y2: number }[] {
   const segs: { x1: number; y1: number; x2: number; y2: number }[] = [];
   const elbow = (pCol: number, cCol: number) => {
@@ -99,41 +61,11 @@ function buildConnectors(): { x1: number; y1: number; x2: number; y2: number }[]
 }
 const CONNECTORS = buildConnectors();
 
-function nextRound(prev: string[]): string[] {
-  const out: string[] = [];
-  for (let i = 0; i < prev.length; i += 2) out.push(prev[i]);
-  return out;
-}
-
-type Match = { home: string | null; away: string | null; winner: string | null };
-
-function buildSide(half: string[], completed: number) {
-  const tbr: string[][] = [half];
-  for (let r = 1; r <= 4; r++) tbr.push(nextRound(tbr[r - 1]));
-  const rounds: Match[][] = [];
-  for (let r = 0; r < 4; r++) {
-    const known = completed >= r;
-    const winnerKnown = completed >= r + 1;
-    const teams = tbr[r];
-    const ms: Match[] = [];
-    for (let i = 0; i < teams.length; i += 2) {
-      ms.push({
-        home: known ? teams[i] : null,
-        away: known ? teams[i + 1] : null,
-        winner: winnerKnown ? teams[i] : null,
-      });
-    }
-    rounds.push(ms);
-  }
-  return { rounds, finalist: completed >= 4 ? tbr[4][0] : null };
-}
-
-export function Bracket({ completed }: { completed: number }) {
-  const { left, right, champion } = useMemo(() => {
-    const left = buildSide(R32_TEAMS.slice(0, 16), completed);
-    const right = buildSide(R32_TEAMS.slice(16), completed);
-    return { left, right, champion: completed >= 5 ? left.finalist : null };
-  }, [completed]);
+export function Bracket({ bracket, myCodes }: { bracket: BracketData; myCodes: string[] }) {
+  const mine = new Set(myCodes);
+  const leftCols = [bracket.left.r32, bracket.left.r16, bracket.left.qf, bracket.left.sf];
+  const rightCols = [bracket.right.sf, bracket.right.qf, bracket.right.r16, bracket.right.r32];
+  const rightLabels = [...SIDE_LABELS].reverse();
 
   return (
     <div className="space-y-3">
@@ -160,8 +92,8 @@ export function Bracket({ completed }: { completed: number }) {
           </svg>
 
           <div className="relative flex h-full" style={{ gap: GAP }}>
-            {left.rounds.map((matches, r) => (
-              <SideColumn key={`L${r}`} label={SIDE_LABELS[r]} matches={matches} />
+            {leftCols.map((nodes, r) => (
+              <SideColumn key={`L${r}`} label={SIDE_LABELS[r]} nodes={nodes} mine={mine} />
             ))}
 
             <div className="flex shrink-0 flex-col" style={{ width: CENTER_W }}>
@@ -169,22 +101,27 @@ export function Bracket({ completed }: { completed: number }) {
                 🏆
               </h2>
               <div className="flex flex-1 flex-col items-center justify-center gap-1.5">
-                <FlagNode team={left.finalist} winner={champion} />
-                <FlagNode team={right.finalist} winner={champion} />
-                {champion && (
+                <FlagNode
+                  team={bracket.final.home}
+                  winnerCode={bracket.final.winnerCode}
+                  mine={mine}
+                />
+                <FlagNode
+                  team={bracket.final.away}
+                  winnerCode={bracket.final.winnerCode}
+                  mine={mine}
+                />
+                {bracket.champion && (
                   <span className="mt-1 text-center font-headline text-[9px] uppercase leading-tight tracking-wide text-trophy-200">
-                    {teamDisplay(champion)}
+                    {teamDisplay(bracket.champion.name)}
                   </span>
                 )}
               </div>
             </div>
 
-            {[...right.rounds]
-              .map((matches, r) => ({ matches, r }))
-              .reverse()
-              .map(({ matches, r }) => (
-                <SideColumn key={`R${r}`} label={SIDE_LABELS[r]} matches={matches} />
-              ))}
+            {rightCols.map((nodes, r) => (
+              <SideColumn key={`R${r}`} label={rightLabels[r]} nodes={nodes} mine={mine} />
+            ))}
           </div>
         </div>
       </div>
@@ -196,44 +133,54 @@ export function Bracket({ completed }: { completed: number }) {
   );
 }
 
-function SideColumn({ label, matches }: { label: string; matches: Match[] }) {
+function SideColumn({
+  label,
+  nodes,
+  mine,
+}: {
+  label: string;
+  nodes: BracketNode[];
+  mine: Set<string>;
+}) {
   return (
     <div className="flex shrink-0 flex-col" style={{ width: SIDE_W }}>
-      <h2 className="flex h-4 items-center justify-center font-headline text-[9px] uppercase tracking-tight text-ink-muted">
+      <h2 className="mb-2 flex h-4 items-center justify-center font-headline text-[9px] uppercase tracking-tight text-ink-muted">
         {label}
       </h2>
       <div className="flex flex-1 flex-col justify-around">
-        {matches.map((m, i) => (
-          <MatchNode key={i} m={m} />
+        {nodes.map((n, i) => (
+          <div key={i} className="flex flex-col items-center gap-0.5">
+            <FlagNode team={n.home} winnerCode={n.winnerCode} mine={mine} />
+            <FlagNode team={n.away} winnerCode={n.winnerCode} mine={mine} />
+          </div>
         ))}
       </div>
     </div>
   );
 }
 
-function MatchNode({ m }: { m: Match }) {
-  return (
-    <div className="flex flex-col items-center gap-0.5">
-      <FlagNode team={m.home} winner={m.winner} />
-      <FlagNode team={m.away} winner={m.winner} />
-    </div>
-  );
-}
-
-function FlagNode({ team, winner }: { team: string | null; winner: string | null }) {
+function FlagNode({
+  team,
+  winnerCode,
+  mine,
+}: {
+  team: TeamRef;
+  winnerCode: string | null;
+  mine: Set<string>;
+}) {
   if (!team) {
     return <span className="h-3.5 w-5 rounded-sm bg-white/5 ring-1 ring-white/10" aria-hidden />;
   }
-  const isLoser = winner !== null && winner !== team;
-  const mine = MIS_EQUIPOS.has(team);
+  const isLoser = winnerCode !== null && winnerCode !== team.code;
+  const isMine = mine.has(team.code);
   return (
-    <span title={teamDisplay(team)} className="relative inline-flex">
+    <span title={teamDisplay(team.name)} className="relative inline-flex">
       <Flag
-        team={team}
+        team={team.name}
         size="sm"
-        className={`${isLoser ? "grayscale opacity-40" : ""} ${mine ? "ring-2 ring-trophy-200" : ""}`}
+        className={`${isLoser ? "grayscale opacity-40" : ""} ${isMine ? "ring-2 ring-trophy-200" : ""}`}
       />
-      {mine && (
+      {isMine && (
         <span className="absolute -right-1.5 -top-1.5 text-[8px] leading-none" aria-hidden>
           ⭐
         </span>
