@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Stage } from "./types";
+import { teamCode, isConfirmedTeam } from "./teams";
 
 /**
  * Estructura real de https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json
@@ -127,8 +128,12 @@ export function parseFixtures(raw: unknown): ParsedMatch[] {
       match_number: m.num ?? idx + 1,
       home_team: m.team1,
       away_team: m.team2,
-      home_team_code: null,
-      away_team_code: null,
+      // Rellena el código solo para equipos confirmados; los placeholders de
+      // bracket (2A, W101, 3A/B/...) quedan en null hasta que se resuelvan.
+      // Así cada sync diario completa los códigos de R16+ apenas openfootball
+      // resuelve los cruces, sin backfill manual.
+      home_team_code: isConfirmedTeam(m.team1) ? teamCode(m.team1) : null,
+      away_team_code: isConfirmedTeam(m.team2) ? teamCode(m.team2) : null,
       venue: m.ground ?? null,
       kickoff_time: parseKickoffISO(m.date, m.time),
       status: ft ? "finished" : "scheduled",
