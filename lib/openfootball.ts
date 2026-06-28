@@ -40,7 +40,9 @@ const RawMatchSchema = z.object({
   ground: z.string().optional(),
   score: z
     .object({
-      ft: z.tuple([z.number(), z.number()]).optional(),
+      ft: z.tuple([z.number(), z.number()]).optional(), // 90 minutos (regla de la polla)
+      et: z.tuple([z.number(), z.number()]).optional(), // tras prórroga
+      p: z.tuple([z.number(), z.number()]).optional(), // penales
     })
     .nullable()
     .optional(),
@@ -65,6 +67,8 @@ export type ParsedMatch = {
   status: "scheduled" | "finished";
   home_score: number | null;
   away_score: number | null;
+  // Código del equipo que avanzó (incluye prórroga/penales). Solo eliminatorias.
+  winner_code: string | null;
 };
 
 const OPENFOOTBALL_URL =
@@ -117,13 +121,33 @@ function parseKickoffISO(date: string, time: string): string {
   return new Date(ms).toISOString();
 }
 
+/**
+ * Equipo que AVANZÓ en un cruce de eliminatorias (incluye prórroga/penales).
+ * Prioridad: penales → prórroga → 90'. Devuelve el código o null si no aplica
+ * (grupos, sin resultado, o empate aún sin desempate).
+ */
+function winnerCodeFor(
+  stage: Stage,
+  team1: string,
+  team2: string,
+  score: { ft?: [number, number]; et?: [number, number]; p?: [number, number] } | null | undefined,
+): string | null {
+  if (stage === "group" || !score) return null;
+  const decide = (pair?: [number, number]) =>
+    !pair || pair[0] === pair[1] ? null : pair[0] > pair[1] ? team1 : team2;
+  const winner = decide(score.p) ?? decide(score.et) ?? decide(score.ft);
+  if (!winner || !isConfirmedTeam(winner)) return null;
+  return teamCode(winner);
+}
+
 export function parseFixtures(raw: unknown): ParsedMatch[] {
   const data = WorldCupSchema.parse(raw);
   return data.matches.map((m, idx) => {
     const ft = m.score?.ft;
+    const stage = stageFor(m.round);
     return {
       id: makeId(m.round, m.team1, m.team2),
-      stage: stageFor(m.round),
+      stage,
       group_name: groupLetter(m.group),
       match_number: m.num ?? idx + 1,
       home_team: m.team1,
@@ -139,6 +163,7 @@ export function parseFixtures(raw: unknown): ParsedMatch[] {
       status: ft ? "finished" : "scheduled",
       home_score: ft ? ft[0] : null,
       away_score: ft ? ft[1] : null,
+      winner_code: winnerCodeFor(stage, m.team1, m.team2, m.score),
     };
   });
 }

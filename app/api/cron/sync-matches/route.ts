@@ -51,6 +51,9 @@ export async function GET(req: Request) {
       status: isLocked ? "finished" : m.status,
       home_score: isLocked ? prior!.home_score : m.home_score,
       away_score: isLocked ? prior!.away_score : m.away_score,
+      // Siempre desde el fixture fresco: así los penales que openfootball
+      // publique tras marcar finished el partido se rellenan en el próximo sync.
+      winner_code: m.winner_code,
     };
   });
 
