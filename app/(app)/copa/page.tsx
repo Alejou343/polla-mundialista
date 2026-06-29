@@ -1,12 +1,20 @@
+import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { CopaView } from "./copa-view";
 import { buildBracket, computeTeamStatuses, statusOf, type KMatch } from "@/lib/copa-bracket";
 
 export const dynamic = "force-dynamic";
 
+// Sorteo de campeón OCULTO (cancelado por decisión unánime del grupo). Se conserva
+// TODO el código y los datos para reactivarlo en una próxima ocasión: poner
+// COPA_HABILITADO en true y restaurar el ítem "Copa" en components/BottomNav.tsx.
+const COPA_HABILITADO: boolean = false;
+
 const KNOCKOUT = ["r32", "r16", "qf", "sf", "final", "third"];
 
 export default async function CopaPage() {
+  if (!COPA_HABILITADO) redirect("/matches");
+
   const supabase = createServerSupabaseClient();
   const {
     data: { user },
