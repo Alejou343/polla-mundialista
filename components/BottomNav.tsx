@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Trophy, ListChecks, Share2, User } from "lucide-react";
+import { Trophy, ListChecks, Swords, User } from "lucide-react";
 
 type Item = {
   href: string;
@@ -16,7 +16,7 @@ export function BottomNav({ pendingCount }: { pendingCount: number }) {
   const items: Item[] = [
     { href: "/matches", label: "Partidos", Icon: ListChecks, badge: pendingCount },
     { href: "/ranking", label: "Ranking", Icon: Trophy },
-    { href: "/diario", label: "Diario", Icon: Share2 },
+    { href: "/bracket", label: "Bracket", Icon: Swords },
     { href: "/perfil", label: "Perfil", Icon: User },
   ];
 
