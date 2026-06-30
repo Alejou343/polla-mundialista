@@ -61,7 +61,12 @@ function buildConnectors(): { x1: number; y1: number; x2: number; y2: number }[]
 }
 const CONNECTORS = buildConnectors();
 
-export function Bracket({ bracket, myCodes }: { bracket: BracketData; myCodes: string[] }) {
+/**
+ * Bracket visual de la fase final (dos lados → copa al centro).
+ * `myCodes` es opcional: si se pasa, resalta esos equipos con ⭐ (usado por el
+ * sorteo, hoy oculto). Sin él, es solo visualización de la fase final.
+ */
+export function Bracket({ bracket, myCodes = [] }: { bracket: BracketData; myCodes?: string[] }) {
   const mine = new Set(myCodes);
   const leftCols = [bracket.left.r32, bracket.left.r16, bracket.left.qf, bracket.left.sf];
   const rightCols = [bracket.right.sf, bracket.right.qf, bracket.right.r16, bracket.right.r32];
@@ -127,7 +132,9 @@ export function Bracket({ bracket, myCodes }: { bracket: BracketData; myCodes: s
       </div>
 
       <p className="text-center text-[11px] text-ink-muted">
-        Eliminados en gris · tus equipos llevan ⭐ y borde dorado
+        {mine.size > 0
+          ? "Eliminados en gris · tus equipos llevan ⭐ y borde dorado"
+          : "Eliminados en gris · el campeón al centro 🏆"}
       </p>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Tablero } from "./tablero";
-import { Bracket } from "./bracket";
+import { Bracket } from "@/components/Bracket";
 import { CopaGuideModal } from "./copa-guide-modal";
 import type { BracketData, TeamStatus } from "@/lib/copa-bracket";
 
