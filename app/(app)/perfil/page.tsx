@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { NameForm, PasswordForm } from "./perfil-form";
 import { Avatar } from "@/components/Avatar";
 import { CopyButton } from "@/components/CopyButton";
+import { SyncButton } from "./sync-button";
 import { signoutAction } from "@/app/(app)/actions";
 import { monthYear } from "@/lib/format";
 import type { LeaderboardEntry } from "@/lib/types";
@@ -105,6 +106,15 @@ export default async function PerfilPage() {
             ¿Cargar un resultado? Entra al partido terminado desde{" "}
             <span className="text-ivory">Partidos</span> y usa la zona admin de esa pantalla.
           </p>
+
+          <div className="mt-4 border-t border-white/10 pt-4">
+            <h3 className="kicker text-trophy-200">Datos del torneo</h3>
+            <p className="mt-1 text-xs text-ink-muted">
+              Trae los resultados y cruces más recientes desde la fuente oficial. Útil si el tablero
+              o el bracket se ven atrasados (el sync automático corre 1×/día).
+            </p>
+            <SyncButton />
+          </div>
         </section>
       )}
 
